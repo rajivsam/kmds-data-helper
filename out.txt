@@ -1,0 +1,43 @@
+[*] Ingestion zones verified at: /home/rajiv/programming/kmds_data_dictionary_helper/data
+[*] Running Architect Pass...
+[*] Generating provisional summary for: Amaral2019_Chapter_EnhancingCompletionTimePredict.pdf
+╭───────────────────────────────────────────────────────────────── ARCHITECT: Predicting Incident Completion Time Using Attribute Selection ─────────────────────────────────────────────────────────────────╮
+│ Business Intent: This paper discusses the use of automatic attribute selection methods to improve prediction models for incident completion time. It compares two techniques: a filter method using        │
+│ ranking and wrapper methods with hill-climbing and best-first search. The study focuses on a real-world incident management process, where human experts' selections were used as a baseline. Only         │
+│ wrapper-based solutions outperformed human experts in terms of mean error on time prediction.                                                                                                              │
+│                                                                                                                                                                                                            │
+│ Key Entities: Attribute Selection, Predictive Models, Incident Management, Automatic Methods, Human Experts                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+[*] Running Data Scientist Pass...
+[*] Analyzing quality for: q2_2016_ticket_resolution_data.csv
+INFO:DataProfiler.profilers.profile_builder: Finding the Null values in the columns... 
+INFO:DataProfiler.profilers.profile_builder: Processing Column 1/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 2/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 3/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 4/4
+INFO:DataProfiler.profilers.profile_builder: Calculating the statistics... 
+INFO:DataProfiler.profilers.profile_builder: Processing Column 1/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 2/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 3/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 4/4
+╭────────────────────────────────────────────────────────────────────────────────────── SCIENTIST: Data Quality Report ──────────────────────────────────────────────────────────────────────────────────────╮
+│ Readiness: Ready for modeling. However, attention should be given to the potential impact of resolving multiple incidents on the same day in the 'closed_at' column.                                       │
+│                                                                                                                                                                                                            │
+│ Warnings:                                                                                                                                                                                                  │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+[*] Running Deep Field Extraction...
+INFO:DataProfiler.profilers.profile_builder: Finding the Null values in the columns... 
+INFO:DataProfiler.profilers.profile_builder: Processing Column 1/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 2/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 3/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 4/4
+INFO:DataProfiler.profilers.profile_builder: Calculating the statistics... 
+INFO:DataProfiler.profilers.profile_builder: Processing Column 1/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 2/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 3/4
+INFO:DataProfiler.profilers.profile_builder: Processing Column 4/4
+[*] Performing deep extraction from: Amaral2019_Chapter_EnhancingCompletionTimePredict.pdf
+
+[✔] Success! Dictionary with 3 fields saved to /home/rajiv/programming/kmds_data_dictionary_helper/data/kmds_output.csv
