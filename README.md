@@ -1,56 +1,62 @@
-# KMDS Data Dictionary Helper (Backend Core)
+---
 
-An AI-powered engine designed to automate the creation of data dictionaries by reconciling business documentation (PDFs) with physical data schemas (CSVs).
+## KMDS Data Helper
 
-This tool serves as a "Backend-First" proof of concept for integration into the [KMDS](https://github.com) ecosystem.
+A CLI tool that uses Ollama and DataProfiler to provide an intelligent, persona-based analysis of Data Science repositories. It reconciles documentation, raw data, and Jupyter notebooks to assess project health and technical readiness.
 
-## 🚀 The Three-Phase Workflow
+## 📂 The KMDS Standard Structure
 
-The helper executes a sequential, multi-persona analysis:
+To enable the full suite of LLM-based features, organize your cloned repository according to this structure:
 
-1. **The Architect Pass**: Summarizes the high-level business intent and entities from research papers or documentation.
-2. **The Data Scientist Pass**: Uses `DataProfiler` to analyze the physical data quality, detecting modeling readiness and potential gaps.
-3. **The Engineer Pass**: Performs deep field extraction, mapping cryptic CSV headers to human-readable definitions found in the text.
-
-## 🛠️ Prerequisites
-
-- **Ollama**: Must be running locally.
-- **Model**: `qwen2.5-coder:7b` (run `ollama pull qwen2.5-coder:7b`)
-- **Python**: 3.12+ managed via `uv`.
-
-## 📦 Installation & Setup
-
-1. **Sync Environment**:
-
-   ```bash
-   uv sync
-   ```
-2. **Install CLI Tool**:
-
-   ```bash
-   uv pip install -e .
-   ```
-3. **Stage Data**:
-
-   - Place documentation PDFs in `data/pdfs/`
-   - Place CSV/TXT samples in `data/samples/`
-
-## ⌨️ Usage
-
-Run the full end-to-end analysis via the CLI command:
-
-```bash
-kmds-helper
+```text
+your-repo-name/
+├── documents/       # PDFs (Specs/Papers) and .txt (Data Dictionaries)
+├── data/            # Raw data samples (CSV, Parquet, etc.)
+├── notebooks/       # Jupyter Notebooks (.ipynb) for analysis
+└── kmds-helper      # The CLI tool (anchored to this root)
 ```
 
-## 🏗️ Technical Architecture
+## 🧠 Integrated Personas
 
-- **Engine (`engine.py`)**: A standalone logic class that handles PDF-to-Markdown conversion (`PyMuPDF4LLM`), data profiling (`DataProfiler`), and LLM orchestration (`Ollama`).
-- **Resilience**: Includes a validation layer to handle LLM hallucinations and re-map key variations (e.g., `name` -> `field_name`).
-- **Compatibility**: Uses specific locks for `setuptools<70` and `urllib3<2` to ensure `DataProfiler` stability.
+The tool analyzes your project through four distinct technical lenses:
 
-## 📝 Planned KMDS Integration
+1. The Architect (PDF Pass): Summarizes business intent and identifies key entities from technical documentation.
+2. The Scientist (Data Pass): Profiles raw data and cross-references it against `.txt` descriptions in `/documents` to verify domain alignment.
+3. The Engineer (Extraction Pass): Reconciles the "Physical Schema" of your data with the "Documented Schema" to generate a unified `kmds_output.csv`.
+4. The Tech Lead (Dev Pass): Aggregates logic from all notebooks to identify technical debt, code redundancy, and deployment readiness.
 
-- Move `engine.py` into the `kmds.core` namespace.
-- Wire the Architect and Scientist reports into KMDS "Knowledge Stashes".
-- Replace the CLI output with the main KMDS UI.
+## 🚀 Getting Started
+
+## 1. Requirements
+
+* Ollama: Running locally with your chosen model (default: `qwen2.5-coder:7b`).
+* Python: 3.10+ managed via `uv` or `pip`.
+
+## 2. Installation
+
+```bash
+# Clone and install dependencies
+uv add nbformat pymupdf4llm dataprofiler ollama rich
+```
+
+## 3. Usage
+
+Run the helper from the root of your target repository:
+
+```bash
+python main.py
+```
+
+## ⚠️ Important Guidelines
+
+* Context Isolation: Keep human-readable descriptions (`.txt` files) in `/documents` and machine-readable evidence (`.csv` files) in `/data`.
+* Guardrails: The engine automatically disables features if the corresponding directory is missing or empty.
+* Advisory Nature: All assessments (Quality Scores, Readiness Ratings) are guidelines based on configurable LLM prompts and should be used as an expert peer-review tool, not an absolute metric.
+
+---
+
+Next Session: Implementing the `/output` isolation and prompt configuration.
+
+---
+
+Ready to stash this and head out? I’ve got the `kmds_dev_phase_v2` context saved and waiting for you!
