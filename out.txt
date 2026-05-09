@@ -1,21 +1,12 @@
-
-🔍 [KMDS] Initializing Engine at: /home/rajiv/programming/kmds_data_helper
-✅ All systems go. Full repository context enabled.
-
-[*] Phase 1: Architect Pass (Analyzing Amaral2019_Chapter_EnhancingCompletionTimePredict.pdf)...
-[*] Architect Pass: Summarizing Amaral2019_Chapter_EnhancingCompletionTimePredict.pdf
-╭───────────────────────────────────────────────────────────────────────────────────────────────── DATA ARCHITECT SUMMARY ──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Title: Enhancing Completion Time Prediction Through Attribute Selection                                                                                                                                                   │
+[*] Running Architect Pass...
+╭──────────────────────────────────────────────────────────────────────────── ARCHITECT: Amaral2019_Chapter_EnhancingCompletionTimePredict.pdf ─────────────────────────────────────────────────────────────────────────────╮
+│ Business Intent: The document appears to be a chapter from a research paper or book that focuses on enhancing the prediction of completion times in some context. It likely discusses various methods, algorithms, or     │
+│ techniques used to improve the accuracy and efficiency of time predictions.                                                                                                                                               │
 │                                                                                                                                                                                                                           │
-│ Summary:                                                                                                                                                                                                                  │
-│ The paper discusses the application of automatic attribute selection methods to improve completion time prediction models for business processes. It compares filter and wrapper techniques, using Annotated Transition   │
-│ Systems (ATS) as the model. Experiments show that wrapper-based solutions outperform human experts in a real-world incident management context.                                                                           │
-│                                                                                                                                                                                                                           │
-│ Key Entities: Claudio A. L. Amaral, Marcelo Fantinato, Hajo A. Reijers, Sarajane M. Peres, None, Springer                                                                                                                 │
+│ Key Entities: Amaral2019, Enhancing Completion Time Predict                                                                                                                                                               │
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
-[*] Phase 2: Data Scientist Pass (Analyzing q2_2016_ticket_resolution_data.csv)...
-[*] Scientist Pass: Analyzing q2_2016_ticket_resolution_data.csv
+[*] Running Data Scientist Pass...
 INFO:DataProfiler.profilers.profile_builder: Finding the Null values in the columns... 
 INFO:DataProfiler.profilers.profile_builder: Processing Column 1/4
 INFO:DataProfiler.profilers.profile_builder: Processing Column 2/4
@@ -26,16 +17,12 @@ INFO:DataProfiler.profilers.profile_builder: Processing Column 1/4
 INFO:DataProfiler.profilers.profile_builder: Processing Column 2/4
 INFO:DataProfiler.profilers.profile_builder: Processing Column 3/4
 INFO:DataProfiler.profilers.profile_builder: Processing Column 4/4
-╭───────────────────────────────────────────────────────────────────────────────────────────── DATA QUALITY & READINESS REPORT ─────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Quality Score: 3.5                                                                                                                                                                                                        │
+[+] Profiling active on: q2_2016_ticket_resolution_data.csv
+╭───────────────────────────────────────────────────────────────────────────────────────────── SCIENTIST: Data Quality Report ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Quality Score: 85                                                                                                                                                                                                         │
 │                                                                                                                                                                                                                           │
-│ Observations:                                                                                                                                                                                                             │
-│ The dataset contains a mix of data types including strings, datetimes, and booleans. The 'number' field appears to be unique for each incident as it has a high cardinality with 24,918 different values. The             │
-│ 'sys_created_at', 'opened_at', and 'closed_at' fields are all datetime types which could be useful for time-based analysis. However, the dataset lacks specific information on the outcome or resolution of incidents,    │
-│ such as whether they were resolved successfully or not.                                                                                                                                                                   │
-│                                                                                                                                                                                                                           │
-│ Modeling Readiness: The data is reasonably structured but lacks some crucial information to effectively model incident outcomes. Features like 'made_sla', 'resolved', and the duration from opening to closing would be  │
-│ beneficial for predictive models.                                                                                                                                                                                         │
-│                                                                                                                                                                                                                           │
-│ Warnings:                                                                                                                                                                                                                 │
+│ Readiness: High                                                                                                                                                                                                           │
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+[*] Running Development Pass (Notebook Analysis)...
+[!] Development Pass failed: 'project_summary'

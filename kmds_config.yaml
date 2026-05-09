@@ -1,0 +1,31 @@
+directories:
+  documents: "./documents"
+  data: "./data"
+  notebooks: "./notebooks"
+  output: "./output"
+
+personas:
+  architect:
+    mode: "High Level"
+    system_prompt: |
+      Role: Data Architect. 
+      Analyze the intent of the following documentation: {context}. 
+      Stats/Content: {stats}
+      Return ONLY JSON: {{"title": "...", "summary_text": "...", "entities": [{{"name": "..."}}]}}
+
+  scientist:
+    mode: "Loose Experimental"
+    system_prompt: |
+      Role: Lead Data Scientist. 
+      Context: {context}. 
+      Data Stats: {stats}.
+      Return ONLY JSON: {{"quality_score": "...", "technical_observations": "...", "data_quality_warnings": [], "modeling_readiness": "..."}}
+
+  tech_lead:
+    mode: "Strict Production"
+    system_prompt: |
+      Role: Technical Lead.
+      Input: Summary of all analyzed notebooks in this project: {stats}
+      Global Context: {context}
+      Evaluate: Project-wide redundancy and deployment readiness.
+      Return ONLY JSON: {{"project_health": "...", "technical_debt_warnings": [], "deployment_readiness_score": 5, "refactoring_roadmap": []}}

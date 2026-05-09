@@ -1,26 +1,39 @@
 import os
-import pandas as pd
-from kmds_data_helper.engine import KMDS_LLM_Engine
+import sys
+import json
+from pathlib import Path
+
+# 1. Bridge the path to the src folder
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+
+# 2. Import the new modular Orchestrator
+from kmds_data_helper.engine import KMDSEngine
 from rich.console import Console
 from rich.panel import Panel
 
 console = Console()
 
-
 def main():
-    # 1. Initialize Engine (Auto-checks /documents, /data, /notebooks)
-    engine = KMDS_LLM_Engine()
+    # 3. Initialize Engine (Uses kmds_config.yaml for paths)
+    try:
+        engine = KMDSEngine()
+    except Exception as e:
+        console.print(f"[bold red][!] Initialization failed:[/] {e}")
+        return
 
-    # 2. PHASE 1: THE ARCHITECT (PDF & Documentation)
-    if engine.active_features["pdf_processing"]:
+    # --- PHASE 1: THE ARCHITECT (PDF & Documentation) ---
+    # We check the active features inside the data_processor module now
+    if engine.data.active_features.get("pdf_processing"):
         console.print("[bold yellow][*] Running Architect Pass...[/]")
-        pdf_files = list(engine.paths["pdf_processing"].glob("*.pdf"))
+        pdf_files = list(engine.config.paths["docs"].glob("*.pdf"))
 
         if pdf_files:
             target_pdf = str(pdf_files[0])
             try:
-                summary = engine.generate_summary(target_pdf)
-                # Robust entity extraction logic
+                # Assuming you still want a quick summary
+                # (You might need to port the old generate_summary to the new Engine class if missing)
+                summary = engine.llm.ask_persona('architect', context=os.path.basename(target_pdf), stats="Initial Scan")
+                
                 entities = [str(e.get("name") if isinstance(e, dict) else e)
                             for e in summary.get('entities', [])]
 
@@ -32,40 +45,35 @@ def main():
             except Exception as e:
                 console.print(f"[bold red][!] Architect Pass failed:[/] {e}")
 
-    # --- PHASE 2: THE SCIENTIST (Updated with Warning Fix) ---
-    if engine.active_features["data_profiling"]:
+    # --- PHASE 2: THE SCIENTIST ---
+    if engine.data.active_features.get("data_profiling"):
         console.print("\n[bold yellow][*] Running Data Scientist Pass...[/]")
-        csv_files = [f for f in engine.paths["data_profiling"].glob("**/*.csv")
-                     if "kmds_output" not in f.name]
-
-        if csv_files:
-            target_csv = str(csv_files[0])
+        # Ground truth check (Isolation Test)
+        truth = engine.data.get_ground_truth()
+        csv_sources = [t['source'] for t in truth if 'columns' in t]
+        
+        if csv_sources:
+            console.print(f"[green][+] Profiling active on:[/] {', '.join(csv_sources)}")
+            # For the scientist report, we just use the first valid source
             try:
-                quality = engine.generate_data_report(target_csv)
-
-                # Robustly handle list of strings or dicts in warnings
-                raw_warnings = quality.get('data_quality_warnings', [])
-                warnings = [str(w.get("message") if isinstance(
-                    w, dict) else w) for w in raw_warnings]
-
+                # Using the modular llm call
+                quality = engine.llm.ask_persona('scientist', context=csv_sources[0], stats="Profiling complete")
+                
                 console.print(Panel(
                     f"[bold green]Quality Score:[/] {quality.get('quality_score')}\n\n"
-                    f"[bold green]Readiness:[/] {quality.get('modeling_readiness')}\n\n"
-                    f"[bold red]Warnings:[/] {', '.join(warnings) if warnings else 'None'}",
+                    f"[bold green]Readiness:[/] {quality.get('modeling_readiness')}",
                     title="SCIENTIST: Data Quality Report", border_style="green"
                 ))
             except Exception as e:
                 console.print(f"[bold red][!] Scientist Pass failed:[/] {e}")
 
-    # --- PHASE 4: THE DEVELOPMENT PASS (Integrated) ---
-    if engine.active_features["notebook_analysis"]:
-        console.print(
-            "\n[bold yellow][*] Running Development Pass (Notebook Analysis)...[/]")
+    # --- PHASE 3: THE DEVELOPMENT PASS ---
+    if engine.data.active_features.get("notebook_analysis"):
+        console.print("\n[bold yellow][*] Running Development Pass (Notebook Analysis)...[/]")
         try:
             dev_report = engine.run_development_pass()
             summary = dev_report["project_summary"]
 
-            # Robustly handle technical debt list
             debt = [str(d) for d in summary.get('technical_debt_warnings', [])]
 
             console.print(Panel(
@@ -76,7 +84,6 @@ def main():
             ))
         except Exception as e:
             console.print(f"[bold red][!] Development Pass failed:[/] {e}")
-
 
 if __name__ == "__main__":
     main()
