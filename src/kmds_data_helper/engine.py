@@ -1,7 +1,12 @@
 import json
+import logging
+from datetime import datetime
 from .config_manager import KMDSConfigManager
 from .data_processor import KMDSDataProcessor
 from .llm_client import LLMInterface
+
+# Setup basic logging for visibility in terminal
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 class KMDSEngine:
     def __init__(self):
@@ -12,60 +17,81 @@ class KMDSEngine:
     def run_development_pass(self):
         """
         Runs the multi-persona development pass:
-        Stage 1: Scientist Pass (Individual Notebook Analysis)
-        Stage 2: Tech Lead Pass (Project Synthesis)
+        Stage 1: Deep Analysis (Scientist & Modeling DS)
+        Stage 2: Strategic Synthesis (Strategic Tech Lead)
         """
         reports = []
-        notebook_files = list(self.config.paths["notebooks"].glob("*.ipynb"))
+        # Header for the synthesis context
+        aggregated_findings = f"AGGREGATED PROJECT INSIGHTS (Generated: {datetime.now().isoformat()}):\n"
+        
+        try:
+            notebook_files = list(self.config.paths["notebooks"].glob("*.ipynb"))
+        except Exception as e:
+            return {"error": f"Failed to access notebook directory: {str(e)}"}
 
         if not notebook_files:
+            logging.warning("No notebooks found to analyze.")
             return {"error": "No notebooks found in directory."}
 
-        # --- STAGE 1: SCIENTIST PASS ---
+        # --- STAGE 1: INDIVIDUAL NOTEBOOK ANALYSIS ---
         for nb in notebook_files:
-            print(f"[*] Scientist Persona: Analyzing {nb.name}...")
-            content = self.data.read_notebook(nb)
+            logging.info(f"[*] Stage 1: Processing '{nb.name}'...")
             
-            # Request analysis from the Scientist persona
-            res = self.llm.ask_persona('scientist', context=nb.name, stats=json.dumps(content)[:15000])
-            
-            # Robustness: Ensure the response is a dictionary
-            if isinstance(res, str) or res is None:
-                res = {"notebook": nb.name, "raw_output": str(res) or "Timeout"}
-            
-            reports.append(res)
+            try:
+                content = self.data.read_notebook(nb)
+                # Keep within model limits while providing enough context
+                stats_context = json.dumps(content)[:15000]
+            except Exception as e:
+                logging.error(f"Failed to read {nb.name}: {str(e)}")
+                continue
 
-        # --- STAGE 2: TECH LEAD PASS (AGGREGATION) ---
-        print("[*] Tech Lead Persona: Synthesizing project-wide report...")
-        tl_response = self.llm.ask_persona('tech_lead', context="Full Project Synthesis", stats=json.dumps(reports))
-        
-        # --- THE JSON SHIELD ---
-        # Catch cases where the LLM returns a string instead of a JSON object
-        if isinstance(tl_response, str) or tl_response is None:
-            tl_response = {
-                "project_summary": {
-                    "project_health": str(tl_response) if tl_response else "Timeout/No Response",
-                    "technical_debt_warnings": ["LLM failed to provide structured JSON"],
-                    "deployment_readiness_score": "N/A"
-                }
+            # Parallel perspective: Quality + Mathematical Rigor
+            sci_res = self.llm.ask_persona('scientist', context=nb.name, stats=stats_context)
+            mod_res = self.llm.ask_persona('modeling_ds', context=nb.name, stats=stats_context)
+
+            # Standardize output for reporting
+            nb_entry = {
+                "notebook": nb.name,
+                "analysis_timestamp": datetime.now().isoformat(),
+                "scientist_report": sci_res if isinstance(sci_res, dict) else {"error": str(sci_res)},
+                "modeling_report": mod_res if isinstance(mod_res, dict) else {"error": str(mod_res)}
             }
+            reports.append(nb_entry)
 
-        # Ensure the 'project_summary' key exists for main.py
-        if "project_summary" not in tl_response:
-            # Look for hallucinated keys (common in 7B models)
-            inner = tl_response.get("summary") or tl_response.get("report") or tl_response
-            tl_response = {"project_summary": inner}
+            # Build cleaned memory for Stage 2
+            aggregated_findings += f"\n### File: {nb.name} ###\n"
+            aggregated_findings += f"Data Scientist Observations: {json.dumps(nb_entry['scientist_report'])}\n"
+            aggregated_findings += f"Modeling Justification: {json.dumps(nb_entry['modeling_report'])}\n"
+
+        # --- STAGE 2: STRATEGIC SYNTHESIS ---
+        logging.info("[*] Stage 2: Running Strategic Synthesis...")
         
-        # Final combined object
+        # Pull high-level project context (Architect perspective or Doc summary)
+        project_context = "Comprehensive repository analysis of data quality and modeling rigor."
+        
+        tl_response = self.llm.ask_persona(
+            'strategic_lead', 
+            context=project_context, 
+            stats=aggregated_findings
+        )
+
+        # Final consolidation
         final_report = {
-            "individual_reports": reports,
-            "project_summary": tl_response["project_summary"]
+            "metadata": {
+                "total_notebooks_processed": len(reports),
+                "run_date": datetime.now().isoformat()
+            },
+            "individual_notebook_reports": reports,
+            "strategic_summary": tl_response if isinstance(tl_response, dict) else {"raw_output": str(tl_response)}
         }
 
-        # --- ISOLATION STEP: Save result to /output ---
-        output_path = self.config.paths["output"] / "kmds_summary.json"
-        with open(output_path, 'w') as f:
-            json.dump(final_report, f, indent=4)
-        
-        print(f"✅ Full report saved to: {output_path}")
+        # --- PERSISTENCE ---
+        try:
+            output_path = self.config.paths["output"] / "kmds_strategic_summary.json"
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(final_report, f, indent=4)
+            logging.info(f"✅ Robust report successfully saved to: {output_path}")
+        except Exception as e:
+            logging.error(f"❌ Failed to save report: {str(e)}")
+
         return final_report

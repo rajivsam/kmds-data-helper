@@ -22,7 +22,6 @@ def main():
         return
 
     # --- PHASE 1: THE ARCHITECT (PDF & Documentation) ---
-    # We check the active features inside the data_processor module now
     if engine.data.active_features.get("pdf_processing"):
         console.print("[bold yellow][*] Running Architect Pass...[/]")
         pdf_files = list(engine.config.paths["docs"].glob("*.pdf"))
@@ -30,8 +29,6 @@ def main():
         if pdf_files:
             target_pdf = str(pdf_files[0])
             try:
-                # Assuming you still want a quick summary
-                # (You might need to port the old generate_summary to the new Engine class if missing)
                 summary = engine.llm.ask_persona('architect', context=os.path.basename(target_pdf), stats="Initial Scan")
                 
                 entities = [str(e.get("name") if isinstance(e, dict) else e)
@@ -48,15 +45,12 @@ def main():
     # --- PHASE 2: THE SCIENTIST ---
     if engine.data.active_features.get("data_profiling"):
         console.print("\n[bold yellow][*] Running Data Scientist Pass...[/]")
-        # Ground truth check (Isolation Test)
         truth = engine.data.get_ground_truth()
         csv_sources = [t['source'] for t in truth if 'columns' in t]
         
         if csv_sources:
             console.print(f"[green][+] Profiling active on:[/] {', '.join(csv_sources)}")
-            # For the scientist report, we just use the first valid source
             try:
-                # Using the modular llm call
                 quality = engine.llm.ask_persona('scientist', context=csv_sources[0], stats="Profiling complete")
                 
                 console.print(Panel(
@@ -67,23 +61,33 @@ def main():
             except Exception as e:
                 console.print(f"[bold red][!] Scientist Pass failed:[/] {e}")
 
-    # --- PHASE 3: THE DEVELOPMENT PASS ---
+    # --- PHASE 3: THE DEVELOPMENT PASS (STRATEGIC SYNTHESIS) ---
     if engine.data.active_features.get("notebook_analysis"):
-        console.print("\n[bold yellow][*] Running Development Pass (Notebook Analysis)...[/]")
+        console.print("\n[bold yellow][*] Running Development Pass (Multi-Persona Synthesis)...[/]")
         try:
+            # dev_report now contains individual_notebook_reports AND strategic_summary
             dev_report = engine.run_development_pass()
-            summary = dev_report["project_summary"]
+            
+            # The Engine returns 'strategic_summary', let's grab it safely
+            summary = dev_report.get("strategic_summary", {})
 
-            debt = [str(d) for d in summary.get('technical_debt_warnings', [])]
+            # Handle the keys defined in your consolidated YAML for strategic_lead
+            alignment = summary.get('strategic_alignment', 'No alignment data')
+            roadmap = summary.get('production_roadmap', 'No roadmap provided')
+            risks = [str(r) for r in summary.get('scalability_risks', [])]
 
             console.print(Panel(
-                f"[bold blue]Health:[/] {summary.get('project_health')}\n"
-                f"[bold green]Deployment Readiness:[/] {summary.get('deployment_readiness_score')}/10\n"
-                f"[bold red]Critical Debt:[/] {', '.join(debt) if debt else 'None'}",
-                title="TECH LEAD: Project Synthesis", border_style="magenta"
+                f"[bold blue]Strategic Alignment:[/] {alignment}\n\n"
+                f"[bold green]Production Roadmap:[/] {roadmap}\n\n"
+                f"[bold red]Scalability Risks:[/] {', '.join(risks) if risks else 'None Identified'}",
+                title="STRATEGIC TECH LEAD: Project Roadmap", border_style="magenta"
             ))
+            
+            console.print(f"\n[bold green]✅ Full JSON artifacts available in:[/] {engine.config.paths['output']}")
+
         except Exception as e:
-            console.print(f"[bold red][!] Development Pass failed:[/] {e}")
+            console.print(f"[bold red][!] Development Pass UI Display failed:[/] {e}")
+            console.print("[yellow][i]Note: The analysis likely finished; check output folder for JSON.[/]")
 
 if __name__ == "__main__":
     main()

@@ -1,8 +1,14 @@
+version: "2.0"
+
 directories:
   documents: "./documents"
   data: "./data"
   notebooks: "./notebooks"
   output: "./output"
+
+engine_settings:
+  shield_mode: "JSON_ONLY"
+  validation: "strict"
 
 personas:
   architect:
@@ -21,6 +27,15 @@ personas:
       Data Stats: {stats}.
       Return ONLY JSON: {{"quality_score": "...", "technical_observations": "...", "data_quality_warnings": [], "modeling_readiness": "..."}}
 
+  modeling_ds:
+    mode: "Notebook Optimization"
+    system_prompt: |
+      Role: Lead Modeling DS. 
+      Context: {context}.
+      Notebook Stats: {stats}.
+      Focus: Model selection justification, hyperparameter rationale, and mathematical rigor.
+      Return ONLY JSON: {{"model_justification": "...", "hyperparameter_eval": "...", "optimization_opportunities": [], "math_rigor_score": 5}}
+
   tech_lead:
     mode: "Strict Production"
     system_prompt: |
@@ -29,3 +44,12 @@ personas:
       Global Context: {context}
       Evaluate: Project-wide redundancy and deployment readiness.
       Return ONLY JSON: {{"project_health": "...", "technical_debt_warnings": [], "deployment_readiness_score": 5, "refactoring_roadmap": []}}
+
+  strategic_lead:
+    mode: "Project Synthesis"
+    system_prompt: |
+      Role: Strategic Tech Lead.
+      Context: {context}.
+      Aggregated Insights: {stats}.
+      Focus: Cross-notebook synthesis, scalability, and long-term technical health.
+      Return ONLY JSON: {{"strategic_alignment": "...", "scalability_risks": [], "production_roadmap": "...", "investment_priority": "..."}}

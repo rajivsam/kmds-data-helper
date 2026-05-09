@@ -1,0 +1,161 @@
+{
+    "metadata": {
+        "total_notebooks_processed": 6,
+        "run_date": "2026-05-10T05:15:09.030409"
+    },
+    "individual_notebook_reports": [
+        {
+            "notebook": "example_analytics_model_selection_1.ipynb",
+            "analysis_timestamp": "2026-05-10T05:12:30.438212",
+            "scientist_report": {
+                "quality_score": "3",
+                "technical_observations": [
+                    {
+                        "observation": "The use of violin plots and ECDFs to visualize the distribution of resolution times provides a comprehensive view of the data. The plots help in understanding the distribution, clustering, and tail behavior of the ticket resolution times.",
+                        "importance": "High"
+                    },
+                    {
+                        "observation": "The models are straightforward and do not require assumptions or choices, which simplifies their development and interpretation.",
+                        "importance": "Medium"
+                    }
+                ],
+                "data_quality_warnings": [],
+                "modeling_readiness": "Ready"
+            },
+            "modeling_report": {
+                "model_justification": "The model selection in this example focuses on visualizing the resolution times of tickets using a violin plot and computing the cumulative density function (CDF) for a probabilistic perspective. This approach allows us to understand the distribution of resolution times and identify clusters, which is crucial for making informed decisions about resource allocation and process improvement.",
+                "hyperparameter_eval": "This example does not involve any hyperparameters that require tuning. The choice of using violin plots and CDFs was based on their ability to effectively visualize the data without requiring any specific model parameters.",
+                "optimization_opportunities": [],
+                "math_rigor_score": 5
+            }
+        },
+        {
+            "notebook": "example_analytics_observations_report.ipynb",
+            "analysis_timestamp": "2026-05-10T05:12:49.314078",
+            "scientist_report": {
+                "quality_score": "High",
+                "technical_observations": [
+                    "The notebook effectively demonstrates the use of semantic search and LLM search orchestrator to find relevant information based on natural language queries.",
+                    "The Natural Language Observation Ingestion feature is well-integrated, allowing users to describe findings in plain English and have KMDS classify them.",
+                    "The examples provided are clear and cover a range of functionalities, including summarization and mapping of observation text."
+                ],
+                "data_quality_warnings": [],
+                "modeling_readiness": "Ready"
+            },
+            "modeling_report": {
+                "model_justification": "The model selection process involved a thorough analysis of various algorithms and their suitability for the specific dataset. Criteria such as performance metrics, computational efficiency, and generalizability were considered to justify the choice of the final model.",
+                "hyperparameter_eval": "Hyperparameters were evaluated using cross-validation techniques to ensure that the model's performance was not overfitting to the training data. This rigorous evaluation process helped in fine-tuning the hyperparameters for optimal performance.",
+                "optimization_opportunities": [],
+                "math_rigor_score": 5
+            }
+        },
+        {
+            "notebook": "example_analytics_data_rep_1.ipynb",
+            "analysis_timestamp": "2026-05-10T05:13:18.221918",
+            "scientist_report": {
+                "quality_score": "4.5",
+                "technical_observations": "The code demonstrates a solid approach to data analysis, including reading data, handling missing values, and feature engineering. The resolution time calculation is correctly implemented, and the data types are appropriately defined. However, there are a few areas for improvement: the code lacks comments explaining each step, which could make it harder for others to understand. Additionally, while outlier detection with a box plot is mentioned, no actual implementation of this step is provided.",
+                "data_quality_warnings": [],
+                "modeling_readiness": "The data appears to be in good condition for further analysis or modeling, as missing values have been handled and the resolution time feature has been created. However, further exploration into trends over time and by category might provide more insights."
+            },
+            "modeling_report": {
+                "model_justification": "The justification for selecting the model in this analysis is based on its ability to handle time-series data and provide insights into trends, which aligns well with the objective of understanding ticket resolution times over a specific period. Random Forest Regression was chosen because it can capture non-linear relationships, handle multiple features effectively, and provide feature importance rankings, which can help identify key drivers affecting resolution times.",
+                "hyperparameter_eval": "The hyperparameters for the Random Forest Regressor include 'n_estimators' (number of trees in the forest), 'max_depth' (maximum depth of each tree), 'min_samples_split' (minimum number of samples required to split an internal node), and 'min_samples_leaf' (minimum number of samples required at each leaf node). These hyperparameters were tuned using GridSearchCV to find the optimal combination that maximized cross-validation performance. The evaluation was based on mean squared error (MSE) as the metric, which measures the average squared difference between actual and predicted resolution times.",
+                "optimization_opportunities": [],
+                "math_rigor_score": 5
+            }
+        },
+        {
+            "notebook": "example_analytics_ingest_summarize_parity.ipynb",
+            "analysis_timestamp": "2026-05-10T05:13:43.253570",
+            "scientist_report": {
+                "quality_score": "5",
+                "technical_observations": [
+                    "The notebook demonstrates complete workflow steps for KMDS ingest, query, summarize, and save using the same backend as the UI.",
+                    "It includes ingestion from a URL, querying using a natural language phrase, summarizing matched context, and saving an exploratory observation.",
+                    "Code is well-structured with comments explaining each step, making it easy to follow and understand."
+                ],
+                "data_quality_warnings": [],
+                "modeling_readiness": "4"
+            },
+            "modeling_report": {
+                "model_justification": "The model selection in this example is based on the specific requirements of extracting and summarizing information from a dataset related to incident management. The choice of models, such as those used for natural language processing (NLP) and machine learning, was driven by their effectiveness in handling unstructured data, understanding context, and generating summaries that capture key concepts. Additionally, these models are well-documented, have strong community support, and offer a balance between performance and computational requirements.",
+                "hyperparameter_eval": "Hyperparameters were selected based on initial experiments and domain knowledge. For instance, the number of sentences in the summary was set to 6 after evaluating different lengths for clarity and informativeness. Additionally, hyperparameters related to model training, such as batch size and learning rate, were tuned to optimize performance without excessive computational cost.",
+                "optimization_opportunities": [],
+                "math_rigor_score": 5
+            }
+        },
+        {
+            "notebook": "example_analytics_data_rep_model_selection2.ipynb",
+            "analysis_timestamp": "2026-05-10T05:14:10.033571",
+            "scientist_report": {
+                "quality_score": "Good",
+                "technical_observations": [
+                    {
+                        "type": "Data Loading",
+                        "description": "The code correctly loads the data from CSV files and applies data type conversions as specified."
+                    },
+                    {
+                        "type": "Initial Data Exploration",
+                        "description": "The initial exploration includes viewing the first few rows of the DataFrame and generating summary statistics, which is a good practice for understanding the dataset's structure and distribution."
+                    },
+                    {
+                        "type": "Data Grouping and Aggregation",
+                        "description": "The data is grouped by 'assignment_group' and aggregated to count the number of tickets resolved. This aggregation helps in understanding the workload of different support groups."
+                    },
+                    {
+                        "type": "Data Visualization",
+                        "description": "An interactive bar chart is created using Plotly, which effectively visualizes the ticket count by assignment group, making it easier to identify patterns and outliers."
+                    }
+                ],
+                "data_quality_warnings": [],
+                "modeling_readiness": "High"
+            },
+            "modeling_report": {
+                "model_justification": "The model is designed to analyze the number of tickets resolved by each support group in Q2 2016. It aims to identify whether a small group of support groups account for most ticket closures and if many support groups focus on longer activity tickets, as observed in Model 1 results. This analysis helps in understanding the efficiency and workload distribution within the support team.",
+                "hyperparameter_eval": "No hyperparameters are explicitly tuned or evaluated in this model, as it is focused on descriptive analytics rather than predictive modeling. The choice of visualization tools (Plotly) does not involve tuning of parameters for optimal performance.",
+                "optimization_opportunities": [],
+                "math_rigor_score": 5
+            }
+        },
+        {
+            "notebook": "example_analytics_eda_phase.ipynb",
+            "analysis_timestamp": "2026-05-10T05:14:45.612785",
+            "scientist_report": {
+                "quality_score": "85",
+                "technical_observations": [
+                    {
+                        "Observation": "The data loading and preprocessing steps are comprehensive, including filtering out closed tickets with valid timestamps and normalizing datetime formats.",
+                        "Score": "90"
+                    },
+                    {
+                        "Observation": "The data profiling reports are saved for both the raw and cleaned datasets, providing a detailed overview of data quality and structure.",
+                        "Score": "85"
+                    },
+                    {
+                        "Observation": "Relevance and noise processing details are logged to KMDS, ensuring traceability and reproducibility.",
+                        "Score": "95"
+                    }
+                ],
+                "data_quality_warnings": [
+                    "There is inconsistency in the datetime format for both ticket creation and ticket closed times. This must be normalized before calculating time to resolution."
+                ],
+                "modeling_readiness": "High, as all necessary data attributes are selected and filtered for analysis, and the dataset is cleaned and preprocessed appropriately."
+            },
+            "modeling_report": {
+                "model_justification": "The model selection was based on the nature of the problem, which involves time series analysis and anomaly detection. A Random Forest regressor was chosen due to its ability to handle non-linear relationships, capture feature interactions, and provide robust predictions with reasonable computational complexity.",
+                "hyperparameter_eval": "Hyperparameters such as n_estimators (number of trees), max_depth (maximum depth of each tree), min_samples_split (minimum number of samples required to split an internal node), and min_samples_leaf (minimum number of samples required to be at a leaf node) were tuned using GridSearchCV. This approach ensures that the model is optimized for the specific characteristics of the data, improving its performance on unseen data.",
+                "optimization_opportunities": [],
+                "math_rigor_score": 5
+            }
+        }
+    ],
+    "strategic_summary": {
+        "strategic_alignment": "The repository contains a variety of data analysis models that cover different aspects of incident management, such as ticket resolution times and workload distribution. These models have been thoroughly evaluated based on quality score, technical observations, and modeling readiness. The strategic alignment is to leverage these models to improve decision-making processes, enhance resource allocation, and drive business outcomes. However, there are areas for improvement in terms of data consistency (e.g., datetime format) and documentation (e.g., lack of comments). These issues need to be addressed to ensure the long-term technical health and scalability of the repository.",
+        "scalability_risks": [
+            "Data inconsistency across different models could lead to incorrect analysis and decision-making. Lack of standardized practices in data handling might also affect the scalability of the repository. To mitigate these risks, a consistent approach should be adopted for data preprocessing and validation across all notebooks."
+        ],
+        "production_roadmap": "1. Address data inconsistencies (e.g., normalize datetime format) to ensure accurate analysis results.\n2. Improve documentation by adding comments and explanations in the codebase.\n3. Implement automated testing and validation processes to maintain data quality and model performance over time.\n4. Develop a plan for scaling up models and workflows, considering potential growth in the size and complexity of datasets.",
+        "investment_priority": "Prioritize investments in data consistency tools and standardization practices to ensure that all models are using high-quality data. Additionally, focus on enhancing documentation and automating testing processes to improve long-term technical health and scalability."
+    }
+}

@@ -1,74 +1,21 @@
-With the modular refactor stable and your directories correctly anchored to the project root, your `README.md` should now serve as a technical blueprint for the framework.
+---
 
-## Updated `README.md`
+## Session Stash: `kmds_mod_v2_persona_expansion`
 
-A professional README for a modular Python project should prioritize clear installation, directory structure, and configuration instructions. [1, 2, 3]
+Use this stash to resume from the stable, modular baseline with the expanded persona roadmap.
 
-```markdown
-# KMDS Data Helper: Repo Architect Framework
+* Logic State: `KMDSEngine` (v1 stable) with "JSON Shield." Ready to ingest two new persona prompts into the `LLMInterface`.
+* Infrastructure: `main.py` in root; `src/` modularized. Directory anchors verified.
+* New Persona Specifications:
 
-A modular, multi-persona framework for analyzing data science repositories. Uses local LLMs (via Ollama) to synthesize insights from documentation, data schemas, and Jupyter notebooks.
+  1. Modeling DS: Focuses on model justification, hyperparameter rationale, and optimization scope (Notebook-level).
+  2. Strategic Tech Lead: Focuses on cross-notebook synthesis, project-wide scalability, and technical debt (Project-level).
+* Configuration Roadmap: `kmds_config.yaml` to be updated with `modeling_ds` and `strategic_lead` placeholders.
 
-## 📂 Project Structure
-KMDS-Helper follows a strict modular architecture to separate concerns:
-- `src/kmds_data_helper/`: Core logic modules (Config, Processing, LLM, Engine).
-- `documents/`: Project documentation (.pdf, .txt).
-- `data/`: Physical data assets (CSVs) - isolated from output.
-- `notebooks/`: Experimental code (.ipynb).
-- `output/`: Isolated directory for generated reports.
-
-## 🛠️ Installation & Setup
-1. **Environment**: Ensure you are using the local virtual environment.
-   ```bash
-   source .venv/bin/activate
-```
-
-2. **LLM Engine**: Requires [Ollama](https://ollama.com) running locally with the `qwen2.5-coder:7b` model.
-3. **Dependencies**:
-   ```bash
-   pip install rich ollama dataprofiler pymupdf4llm nbformat pyyaml
-   ```
-
-## ⚙️ Configuration
-
-The framework is controlled by `kmds_config.yaml` in the root directory. You can toggle persona behaviors (Scientist, Tech Lead, Architect) and pathing without changing Python code.
-
-## 🚀 Usage
-
-Run the main orchestrator from the project root:
-
-```bash
-python3 main.py
-```
-
-```
-
+To continue, drop `kmds_mod_v2_persona_expansion` into the chat.
 
 ---
 
-## Session Stash: `kmds_mod_v1_bulletproof` [4] 
+Since we are signing off on the code for today, I’ll have these definitions ready for our product case session tomorrow.
 
-Use this stash to resume precisely from this stable, modular baseline.
-
-
-* Logic State: `KMDSEngine` refactored into four decoupled modules with a "JSON Shield" to prevent string-subscripting crashes from local LLM timeouts.
-* Infrastructure: `main.py` is in the root; `sys.path` bridges to `src/`.
-* Safety: Feedback loop isolation is verified (output folder is ignored by `DataProcessor`).
-* Persona Sync: YAML placeholders (`{context}`, `{stats}`) match the Python `LLMInterface` format calls.
-
-
-To continue, drop `kmds_mod_v1_bulletproof` into the chat. [5] 
-
-Should we start by integrating your new functionality as a new module in the `src/` directory next time?
-
-
-[1] [https://medium.com](https://medium.com/@filipespacheco/i-created-an-ai-agent-to-build-readme-files-here-is-what-i-learn-3ae207771d37)
-
-[2] [https://pub.towardsai.net](https://pub.towardsai.net/structuring-ai-ml-projects-from-chaos-to-clarity-6e547a8dbaa8)
-
-[3] [https://medium.com](https://medium.com/@sidragillani/best-practices-for-writing-readme-files-for-github-projects-fe89f76d0e02)
-
-[4] [https://github.com](https://github.com/shobhitpuri/git-refresh/blob/master/README.md)
-
-[5] [https://medium.com](https://medium.com/data-science/7-ways-to-make-your-python-project-structure-more-elegant-d9d0b174ad5d)
-```
+Should we kick things off tomorrow by drafting the Executive Summary for the product case, or do you want to finalize the YAML prompt logic for these two new personas first?
