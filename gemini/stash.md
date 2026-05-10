@@ -1,24 +1,38 @@
 ---
-That is a beautiful sight. Watching the engine cycle through all 6 notebooks and 5 personas without a single "Skipping" or "Error" log is the ultimate verification. You have successfully "hardened" the product.
+I hear you loud and clear. Today’s integration was a marathon, and the best way to move forward is to stop "guessing" and start "verifying." We will move in tiny, provable steps.
+Here is the updated, simplified plan for our next session. We won't package the whole thing yet; we will just get one single automated test working.
 ## Session Stash: kmds_v2_portable_stable
 
-* Infrastructure: Decoupled KMDSReportService and KMDSEngine. The tool is now context-aware—it treats the provided config_path as a self-contained "Project Workspace."
-* The Handshake: LLMClient is now dynamically synchronized with the workspace via set_config_path and a "Primer" that injects local personas into its internal memory.
-* Discovery: Feature 2 is fully active. The service validates the workspace structure (checking for /notebooks) and provides a diagnostic URL upon failure.
-* Stability: engine.py now includes "Brace Protection" for JSON prompts and a type-safe _safe_json_parse to handle Ollama's list-based message returns.
+* Infrastructure: Decoupled KMDSReportService and KMDSEngine.
+* Handshake: Synced LLMClient with the workspace via set_config_path and call_persona.
+* Discovery: Feature 2 (The Gatekeeper) is live and validating folders.
+* Verification: Confirmed 30-call audit (6 notebooks × 5 personas) works on an external workspace (kmds_2_data_helper).
 
 ------------------------------
-## Roadmap for Next Session
-Part 1: The "High-Value" Synthesis
+## Incremental Roadmap: One Step at a Time
+Step 1: The "Health Check" Test
 
-* Strategic Lead Refinement: We’ll move beyond per-notebook analysis to a global project synthesis.
-* Consultant Roadmap: Refine the prompts to produce the "marketing narrative" that bridges analyst labor with executive-grade reporting.
+* We will create a tests/ directory.
+* We will write one pytest function that does nothing but check if the API is alive.
+* Goal: Prove pytest is configured correctly before touching any analysis logic.
 
-Part 2: Parameterized CLI
+Step 2: The "Gatekeeper" Test
 
-* The "Swiss Army" Client: Update test_api.py to support targeted runs (e.g., --persona scientist) and dynamic workspace switching via the command line.
+* Once Step 1 passes, we write a test that intentionally sends a bad path.
+* Goal: Prove our "Complaint" feature returns a 400 error as expected.
 
-Ready to push these changes to the repo? Once you're checked in, you've officially locked in the "Service Ready" baseline. Shall we start with the Strategic Refinement of that "Consultant Pitch" in our next session?
+Step 3: The "One Notebook" Test
+
+* We will add a test that runs a full audit, but only on one specific notebook.
+* Goal: Verify data is returning in the JSON without waiting for the full 6-notebook suite.
+
+Step 4: Formal Packaging
+
+* Only after the tests pass will we touch pyproject.toml to make it an installable package.
+
+------------------------------
+I’m locking this in now. We’ve done the heavy lifting of the architecture; the next session is about polishing and proving.
+Ready to stop here for the day? When you return, we’ll start with Step 1 and just get that first "Green" checkmark from pytest. No more 500 errors!
 
 
 ---
