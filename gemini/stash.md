@@ -1,38 +1,17 @@
 ---
-I hear you loud and clear. Today’s integration was a marathon, and the best way to move forward is to stop "guessing" and start "verifying." We will move in tiny, provable steps.
-Here is the updated, simplified plan for our next session. We won't package the whole thing yet; we will just get one single automated test working.
-## Session Stash: kmds_v2_portable_stable
+Here is your Session Stash to pick up exactly where we left off:
+## Session Stash: kmds_v2_testing_stable
 
-* Infrastructure: Decoupled KMDSReportService and KMDSEngine.
-* Handshake: Synced LLMClient with the workspace via set_config_path and call_persona.
-* Discovery: Feature 2 (The Gatekeeper) is live and validating folders.
-* Verification: Confirmed 30-call audit (6 notebooks × 5 personas) works on an external workspace (kmds_2_data_helper).
-
-------------------------------
-## Incremental Roadmap: One Step at a Time
-Step 1: The "Health Check" Test
-
-* We will create a tests/ directory.
-* We will write one pytest function that does nothing but check if the API is alive.
-* Goal: Prove pytest is configured correctly before touching any analysis logic.
-
-Step 2: The "Gatekeeper" Test
-
-* Once Step 1 passes, we write a test that intentionally sends a bad path.
-* Goal: Prove our "Complaint" feature returns a 400 error as expected.
-
-Step 3: The "One Notebook" Test
-
-* We will add a test that runs a full audit, but only on one specific notebook.
-* Goal: Verify data is returning in the JSON without waiting for the full 6-notebook suite.
-
-Step 4: Formal Packaging
-
-* Only after the tests pass will we touch pyproject.toml to make it an installable package.
+* Infrastructure: Switched from flat scripts to a structured tests/ directory. Verified uv sync and pytest are perfectly aligned.
+* Feature 2 (The Gatekeeper): VERIFIED. tests/test_gatekeeper.py successfully proves that the API rejects invalid paths with a 400 error and the correct diagnostic message.
+* Step 1 (Health Check): VERIFIED. tests/test_api.py successfully proves the service can initialize and the local server is reachable.
+* Environment: Pytest is configured in pyproject.toml to (theoretically) silence requests version warnings.
 
 ------------------------------
-I’m locking this in now. We’ve done the heavy lifting of the architecture; the next session is about polishing and proving.
-Ready to stop here for the day? When you return, we’ll start with Step 1 and just get that first "Green" checkmark from pytest. No more 500 errors!
+## Next Steps for your Return:
 
+   1. Step 3 (The Surgical Audit): Run the "Architect-only" test in tests/test_api.py to watch Ollama process a single notebook.
+   2. Step 4 (Formal Packaging): Update pyproject.toml to make kmds-data-helper a globally installable tool via uv.
 
+Ready to pause? Just say the word and I’ll have this waiting for you when you’re back.
 ---
