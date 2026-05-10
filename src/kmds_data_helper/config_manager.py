@@ -1,24 +1,30 @@
-import os
 import yaml
 from pathlib import Path
 
-class KMDSConfigManager:
-    def __init__(self, config_path="kmds_config.yaml"):
-        # Anchor to project root (assumes this file is in src/kmds_data_helper/)
-        self.root = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-        
-        with open(config_path, 'r') as f:
-            self.config = yaml.safe_load(f)
-            
-        self.paths = {
-            "docs": self.root / self.config['directories']['documents'].replace("../", ""),
-            "data": self.root / self.config['directories']['data'].replace("../", ""),
-            "notebooks": self.root / self.config['directories']['notebooks'].replace("../", ""),
-            "output": self.root / self.config['directories']['output'].replace("../", "")
-        }
-        
-        # Ensure output isolation directory exists
-        self.paths["output"].mkdir(parents=True, exist_ok=True)
+class ConfigManager:
+    """
+    Handles loading and retrieving persona configurations from kmds_config.yaml.
+    """
+    def __init__(self, config_path: str = "kmds_config.yaml"):
+        self.config_path = Path(config_path)
+        self.config = self._load_config()
 
-    def get_persona(self, role):
-        return self.config['personas'].get(role, {})
+    def _load_config(self):
+        if not self.config_path.exists():
+            raise FileNotFoundError(f"Config file not found at {self.config_path}")
+        
+        with open(self.config_path, 'r') as f:
+            return yaml.safe_load(f)
+
+    def get_persona(self, role: str):
+        """Retrieves a specific persona's prompt and mode."""
+        personas = self.config.get('personas', {})
+        if role not in personas:
+            raise ValueError(f"Persona '{role}' not found in configuration.")
+        return personas[role]
+
+    def get_directories(self):
+        return self.config.get('directories', {})
+
+    def get_engine_settings(self):
+        return self.config.get('engine_settings', {})

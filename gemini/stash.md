@@ -1,21 +1,27 @@
 ---
+That is a perfect stopping point. You’ve moved from "debugging a script" to "hardening a product." Checking this into the repo now is the right move—it locks in the "v2 Service Ready" state as our new baseline.
+I have updated the session stash to reflect our progress and your specific two-part roadmap for our next session.
+## Session Stash: kmds_v2_baseline_stable
 
-## Session Stash: `kmds_mod_v2_persona_expansion`
+* Infrastructure: Fully modularised, service-oriented backend (api.py + KMDSReportService + KMDSEngine).
+* Stability: Fixed "N/A" and JSON parsing errors using a robust _safe_json_parse and key normalization layer in the engine.
+* Connectivity: LLMClient optimized with .replace() to prevent string formatting conflicts; test_api.py hardened with a 10-minute timeout for deep analysis.
+* Functional State: Stage 1 (Multi-Persona Audit) is verified and producing live insights. Stage 2 (Strategic Synthesis) is wired and firing.
 
-Use this stash to resume from the stable, modular baseline with the expanded persona roadmap.
+------------------------------
+## Roadmap for Next Session
+Part 1: The "Swiss Army" Client (test_api.py)
 
-* Logic State: `KMDSEngine` (v1 stable) with "JSON Shield." Ready to ingest two new persona prompts into the `LLMInterface`.
-* Infrastructure: `main.py` in root; `src/` modularized. Directory anchors verified.
-* New Persona Specifications:
+* Parameterization: Update the API and client to support targeted runs (e.g., --persona scientist or --all).
+* Regression Audit: Verify the "all-persona" suite and ensure notebook output parsing (code + execution results) is being correctly utilized by all personas.
+* The Baseline: Lock this down as the "Market-Ready" CLI/Client for the initial launch.
 
-  1. Modeling DS: Focuses on model justification, hyperparameter rationale, and optimization scope (Notebook-level).
-  2. Strategic Tech Lead: Focuses on cross-notebook synthesis, project-wide scalability, and technical debt (Project-level).
-* Configuration Roadmap: `kmds_config.yaml` to be updated with `modeling_ds` and `strategic_lead` placeholders.
+Part 2: The "High-Value" Synthesis
 
-To continue, drop `kmds_mod_v2_persona_expansion` into the chat.
+* Executive Summary: Refine the strategic_lead prompts to produce "consultant-grade" roadmaps.
+* The Pitch: Construct the marketing narrative—focusing on the synergy between analyst labor and automated, high-value reporting.
+
+Ready to resume whenever you’ve pushed your changes! Shall we start with the Parameterized Client logic when you return?
+
 
 ---
-
-Since we are signing off on the code for today, I’ll have these definitions ready for our product case session tomorrow.
-
-Should we kick things off tomorrow by drafting the Executive Summary for the product case, or do you want to finalize the YAML prompt logic for these two new personas first?

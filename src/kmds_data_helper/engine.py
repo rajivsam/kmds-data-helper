@@ -1,97 +1,117 @@
 import json
-import logging
-from datetime import datetime
-from .config_manager import KMDSConfigManager
-from .data_processor import KMDSDataProcessor
-from .llm_client import LLMInterface
-
-# Setup basic logging for visibility in terminal
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+from pathlib import Path
+from typing import List, Dict, Any
+from kmds_data_helper.utils import parse_notebook_with_outputs, save_kmds_json
 
 class KMDSEngine:
-    def __init__(self):
-        self.config = KMDSConfigManager()
-        self.data = KMDSDataProcessor(self.config)
-        self.llm = LLMInterface(self.config)
+    def __init__(self, llm_client):
+        """Initializes with an LLM client."""
+        self.llm = llm_client
 
-    def run_development_pass(self):
-        """
-        Runs the multi-persona development pass:
-        Stage 1: Deep Analysis (Scientist & Modeling DS)
-        Stage 2: Strategic Synthesis (Strategic Tech Lead)
-        """
-        reports = []
-        # Header for the synthesis context
-        aggregated_findings = f"AGGREGATED PROJECT INSIGHTS (Generated: {datetime.now().isoformat()}):\n"
-        
-        try:
-            notebook_files = list(self.config.paths["notebooks"].glob("*.ipynb"))
-        except Exception as e:
-            return {"error": f"Failed to access notebook directory: {str(e)}"}
-
-        if not notebook_files:
-            logging.warning("No notebooks found to analyze.")
-            return {"error": "No notebooks found in directory."}
-
-        # --- STAGE 1: INDIVIDUAL NOTEBOOK ANALYSIS ---
-        for nb in notebook_files:
-            logging.info(f"[*] Stage 1: Processing '{nb.name}'...")
-            
+    def _safe_json_parse(self, data: Any, fallback_key: str) -> Dict:
+        """Handles both raw strings and dictionaries with key normalization."""
+        parsed = {}
+        if isinstance(data, dict):
+            parsed = data
+        else:
             try:
-                content = self.data.read_notebook(nb)
-                # Keep within model limits while providing enough context
-                stats_context = json.dumps(content)[:15000]
-            except Exception as e:
-                logging.error(f"Failed to read {nb.name}: {str(e)}")
-                continue
+                # Clean markdown and parse string
+                clean_text = str(data).strip().replace("```json", "").replace("```", "").strip()
+                parsed = json.loads(clean_text)
+            except Exception:
+                parsed = {fallback_key: str(data)}
 
-            # Parallel perspective: Quality + Mathematical Rigor
-            sci_res = self.llm.ask_persona('scientist', context=nb.name, stats=stats_context)
-            mod_res = self.llm.ask_persona('modeling_ds', context=nb.name, stats=stats_context)
-
-            # Standardize output for reporting
-            nb_entry = {
-                "notebook": nb.name,
-                "analysis_timestamp": datetime.now().isoformat(),
-                "scientist_report": sci_res if isinstance(sci_res, dict) else {"error": str(sci_res)},
-                "modeling_report": mod_res if isinstance(mod_res, dict) else {"error": str(mod_res)}
-            }
-            reports.append(nb_entry)
-
-            # Build cleaned memory for Stage 2
-            aggregated_findings += f"\n### File: {nb.name} ###\n"
-            aggregated_findings += f"Data Scientist Observations: {json.dumps(nb_entry['scientist_report'])}\n"
-            aggregated_findings += f"Modeling Justification: {json.dumps(nb_entry['modeling_report'])}\n"
-
-        # --- STAGE 2: STRATEGIC SYNTHESIS ---
-        logging.info("[*] Stage 2: Running Strategic Synthesis...")
+        # --- KEY NORMALIZATION ---
+        if isinstance(parsed, dict):
+            # Find any key containing "score" and map it to quality_score
+            for k in list(parsed.keys()):
+                if "score" in k.lower():
+                    val = parsed.pop(k)
+                    try:
+                        parsed["quality_score"] = int(float(val))
+                    except:
+                        parsed["quality_score"] = 0
+            
+            # Ensure required keys exist for the API contract
+            if "quality_score" not in parsed:
+                parsed["quality_score"] = 0
+            if fallback_key not in parsed:
+                parsed[fallback_key] = "No insight found"
         
-        # Pull high-level project context (Architect perspective or Doc summary)
-        project_context = "Comprehensive repository analysis of data quality and modeling rigor."
-        
-        tl_response = self.llm.ask_persona(
-            'strategic_lead', 
-            context=project_context, 
-            stats=aggregated_findings
-        )
+        return parsed
 
-        # Final consolidation
-        final_report = {
-            "metadata": {
-                "total_notebooks_processed": len(reports),
-                "run_date": datetime.now().isoformat()
-            },
-            "individual_notebook_reports": reports,
-            "strategic_summary": tl_response if isinstance(tl_response, dict) else {"raw_output": str(tl_response)}
+    def process_notebook_stage(self, nb_path: Path) -> Dict:
+        """Stage 1: Multi-Persona Notebook Analysis."""
+        print(f"[*] Analyzing Notebook: {nb_path.name}")
+        
+        # Default structure to prevent crashes
+        result = {
+            "notebook_name": nb_path.name,
+            "scientist_insight": {"quality_score": 0, "insight": "Pending..."},
+            "modeling_insight": {"exploratory_summary": "Pending...", "model_justification": "N/A"}
         }
-
-        # --- PERSISTENCE ---
+        
         try:
-            output_path = self.config.paths["output"] / "kmds_strategic_summary.json"
-            with open(output_path, 'w', encoding='utf-8') as f:
-                json.dump(final_report, f, indent=4)
-            logging.info(f"✅ Robust report successfully saved to: {output_path}")
+            full_content = parse_notebook_with_outputs(str(nb_path))
+            
+            # Pass 1: Scientist
+            print(f"    -> Running Scientist Persona...")
+            sci_raw = self.llm.call_persona(
+                persona="scientist",
+                context=full_content,
+                stats="REQUIRED JSON: {quality_score: int, insight: string}"
+            )
+            result["scientist_insight"] = self._safe_json_parse(sci_raw, "insight")
+            
+            # Pass 2: Modeling DS
+            print(f"    -> Running Modeling DS Persona...")
+            mod_raw = self.llm.call_persona(
+                persona="modeling_ds",
+                context=full_content,
+                stats="REQUIRED JSON: {exploratory_summary: string, model_justification: string}"
+            )
+            result["modeling_insight"] = self._safe_json_parse(mod_raw, "exploratory_summary")
+            
+            return result
         except Exception as e:
-            logging.error(f"❌ Failed to save report: {str(e)}")
+            print(f" [!] Error processing {nb_path.name}: {e}")
+            return result
 
-        return final_report
+    def run_stage_1(self, notebook_dir: str) -> List[Dict]:
+        results = []
+        nb_folder = Path(notebook_dir)
+        for nb_file in sorted(nb_folder.glob("*.ipynb")):
+            insight = self.process_notebook_stage(nb_file)
+            results.append(insight)
+        return results
+
+    def run_strategic_synthesis(self, stage_1_results: List[Dict], output_dir: str):
+        """Stage 2: Global project-wide synthesis."""
+        print("[*] Running Strategic Synthesis...")
+        summary_stats = str(stage_1_results)
+        
+        try:
+            strategic_raw = self.llm.call_persona(
+                persona="strategic_lead",
+                context="Full Project Synthesis",
+                stats=f"REQUIRED JSON: {{strategic_alignment: string, production_roadmap: string}} DATA: {summary_stats}"
+            )
+            
+            report_dict = self._safe_json_parse(strategic_raw, "strategic_alignment")
+            
+            # Ensure synthesis keys exist
+            if "production_roadmap" not in report_dict:
+                report_dict["production_roadmap"] = "N/A"
+            
+            save_path = Path(output_dir) / "kmds_strategic_summary.json"
+            save_kmds_json(
+                {"strategic_report": report_dict, "notebook_details": stage_1_results},
+                str(save_path)
+            )
+            return report_dict
+        except Exception as e:
+            print(f" [!] Strategic Synthesis Failed: {e}")
+            return {
+                "strategic_alignment": f"Synthesis Error: {str(e)}", 
+                "production_roadmap": "N/A"
+            }

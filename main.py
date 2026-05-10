@@ -1,93 +1,72 @@
 import os
 import sys
-import json
 from pathlib import Path
-
-# 1. Bridge the path to the src folder
-sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
-
-# 2. Import the new modular Orchestrator
-from kmds_data_helper.engine import KMDSEngine
 from rich.console import Console
 from rich.panel import Panel
+
+# Bridge the path to the src folder so we can import the package
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+
+# Import the new service-oriented components
+from kmds_data_helper.service import KMDSReportService
+from kmds_data_helper.llm_client import LLMClient  # Ensure this class exists in your src
 
 console = Console()
 
 def main():
-    # 3. Initialize Engine (Uses kmds_config.yaml for paths)
-    try:
-        engine = KMDSEngine()
-    except Exception as e:
-        console.print(f"[bold red][!] Initialization failed:[/] {e}")
+    """
+    Main entry point refactored to use the KMDSReportService.
+    This demonstrates the 'Service-First' approach for local execution.
+    """
+    console.print(Panel.fit(
+        "[bold cyan]KMDS Data Helper v2.0[/]\n[italic]Service-Oriented Multi-Persona Analysis[/]",
+        border_style="blue"
+    ))
+
+    # 1. Configuration Paths
+    config_path = "kmds_config.yaml"
+    notebook_dir = "./notebooks"
+    output_dir = "./output"
+
+    if not os.path.exists(config_path):
+        console.print(f"[bold red][!] Error:[/] Configuration file '{config_path}' not found.")
         return
 
-    # --- PHASE 1: THE ARCHITECT (PDF & Documentation) ---
-    if engine.data.active_features.get("pdf_processing"):
-        console.print("[bold yellow][*] Running Architect Pass...[/]")
-        pdf_files = list(engine.config.paths["docs"].glob("*.pdf"))
+    try:
+        # 2. Initialize the Infrastructure
+        # We initialize the LLMClient (which reads the config) and pass it to the Service
+        console.print("[*] Initializing LLM Client and KMDS Service...")
+        llm_client = LLMClient(config_path=config_path)
+        service = KMDSReportService(llm_client=llm_client, output_dir=output_dir)
 
-        if pdf_files:
-            target_pdf = str(pdf_files[0])
-            try:
-                summary = engine.llm.ask_persona('architect', context=os.path.basename(target_pdf), stats="Initial Scan")
-                
-                entities = [str(e.get("name") if isinstance(e, dict) else e)
-                            for e in summary.get('entities', [])]
+        # 3. Execute Full Pipeline via the Service
+        # This one call replaces the manual Stage 1 / Stage 2 loops
+        console.print(f"[*] Starting analysis on notebooks in: [bold white]{notebook_dir}[/]")
+        report = service.generate_comprehensive_report(notebook_dir=notebook_dir)
 
-                console.print(Panel(
-                    f"[bold blue]Business Intent:[/] {summary.get('summary_text')}\n\n"
-                    f"[bold blue]Key Entities:[/] {', '.join(entities)}",
-                    title=f"ARCHITECT: {summary.get('title')}", border_style="blue"
-                ))
-            except Exception as e:
-                console.print(f"[bold red][!] Architect Pass failed:[/] {e}")
-
-    # --- PHASE 2: THE SCIENTIST ---
-    if engine.data.active_features.get("data_profiling"):
-        console.print("\n[bold yellow][*] Running Data Scientist Pass...[/]")
-        truth = engine.data.get_ground_truth()
-        csv_sources = [t['source'] for t in truth if 'columns' in t]
+        # 4. Success Output
+        # Extract the strategic summary for the console view
+        strat_report = report.get("project_summary", {})
         
-        if csv_sources:
-            console.print(f"[green][+] Profiling active on:[/] {', '.join(csv_sources)}")
-            try:
-                quality = engine.llm.ask_persona('scientist', context=csv_sources[0], stats="Profiling complete")
-                
-                console.print(Panel(
-                    f"[bold green]Quality Score:[/] {quality.get('quality_score')}\n\n"
-                    f"[bold green]Readiness:[/] {quality.get('modeling_readiness')}",
-                    title="SCIENTIST: Data Quality Report", border_style="green"
-                ))
-            except Exception as e:
-                console.print(f"[bold red][!] Scientist Pass failed:[/] {e}")
+        console.print("\n")
+        console.print(Panel(
+            f"[bold blue]Strategic Alignment:[/]\n{strat_report.get('strategic_alignment', 'N/A')}\n\n"
+            f"[bold red]Scalability Risks:[/]\n{', '.join(strat_report.get('scalability_risks', [])) if isinstance(strat_report.get('scalability_risks'), list) else strat_report.get('scalability_risks', 'N/A')}\n\n"
+            f"[bold green]Production Roadmap:[/]\n{strat_report.get('production_roadmap', 'N/A')}",
+            title="[bold magenta]STRATEGIC TECH LEAD: Project Roadmap[/]",
+            border_style="magenta",
+            padding=(1, 2)
+        ))
 
-    # --- PHASE 3: THE DEVELOPMENT PASS (STRATEGIC SYNTHESIS) ---
-    if engine.data.active_features.get("notebook_analysis"):
-        console.print("\n[bold yellow][*] Running Development Pass (Multi-Persona Synthesis)...[/]")
-        try:
-            # dev_report now contains individual_notebook_reports AND strategic_summary
-            dev_report = engine.run_development_pass()
-            
-            # The Engine returns 'strategic_summary', let's grab it safely
-            summary = dev_report.get("strategic_summary", {})
+        console.print(f"\n[bold green]✅ Full JSON artifacts available in:[/] {report['metadata']['output_directory']}")
+        console.print(f"[bold green]✅ Service Report saved to:[/] {output_dir}/full_service_report.json")
 
-            # Handle the keys defined in your consolidated YAML for strategic_lead
-            alignment = summary.get('strategic_alignment', 'No alignment data')
-            roadmap = summary.get('production_roadmap', 'No roadmap provided')
-            risks = [str(r) for r in summary.get('scalability_risks', [])]
-
-            console.print(Panel(
-                f"[bold blue]Strategic Alignment:[/] {alignment}\n\n"
-                f"[bold green]Production Roadmap:[/] {roadmap}\n\n"
-                f"[bold red]Scalability Risks:[/] {', '.join(risks) if risks else 'None Identified'}",
-                title="STRATEGIC TECH LEAD: Project Roadmap", border_style="magenta"
-            ))
-            
-            console.print(f"\n[bold green]✅ Full JSON artifacts available in:[/] {engine.config.paths['output']}")
-
-        except Exception as e:
-            console.print(f"[bold red][!] Development Pass UI Display failed:[/] {e}")
-            console.print("[yellow][i]Note: The analysis likely finished; check output folder for JSON.[/]")
+    except FileNotFoundError as e:
+        console.print(f"[bold red][!] Path Error:[/] {e}")
+    except Exception as e:
+        console.print(f"[bold red][!] Critical Failure during service execution:[/] {str(e)}")
+        import traceback
+        console.print(traceback.format_exc())
 
 if __name__ == "__main__":
     main()

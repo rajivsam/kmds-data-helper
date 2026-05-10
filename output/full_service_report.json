@@ -1,5 +1,6 @@
 {
-    "strategic_report": {
+    "status": "success",
+    "project_summary": {
         "strategic_alignment": "The project is aligned with business objectives by focusing on ticket resolution time, which is crucial for customer satisfaction and operational efficiency. The insights from the exploratory data analysis will help in identifying patterns and trends that can be used to improve processes and optimize resource allocation.",
         "scalability_risks": [
             "The current models may struggle with large datasets due to missing values and inconsistent datetime formats. It's recommended to implement robust data preprocessing steps to handle these issues before scaling up the analysis."
@@ -145,5 +146,9 @@
                 "quality_score": 5
             }
         }
-    ]
+    ],
+    "metadata": {
+        "total_notebooks": 6,
+        "output_directory": "output"
+    }
 }
