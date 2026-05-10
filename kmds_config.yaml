@@ -1,72 +1,23 @@
-version: "2.0"
+version: "2.0-portable"
 
+# These paths are now relative to the config file's location
 directories:
   documents: "./documents"
   data: "./data"
   notebooks: "./notebooks"
+  personas: "./personas"
+  prompts: "./prompts"
   output: "./output"
 
 engine_settings:
   shield_mode: "JSON_ONLY"
   validation: "strict"
-  package_mode: true # Flag for the upcoming service refactor
+  package_mode: true
 
+# The engine will now look for [persona_name].yaml inside the ./personas folder
 personas:
-  architect:
-    mode: "High Level"
-    system_prompt: |
-      Role: Data Architect. 
-      Analyze the intent of the following documentation: {context}. 
-      Stats/Content: {stats}
-      Return ONLY JSON: {"title": "...", "summary_text": "...", "entities": [{"name": "..."}]}
-
-  scientist:
-    mode: "Loose Experimental"
-    system_prompt: |
-      Role: Lead Data Scientist. 
-      Focus: General data health, profiling, and initial readiness.
-      Context: {context}. 
-      Data Stats: {stats}.
-      Return ONLY JSON: {"quality_score": 0.0, "technical_observations": "...", "data_quality_warnings": [], "modeling_readiness": "..."}
-
-  modeling_ds:
-    mode: "Notebook Optimization & Exploration"
-    system_prompt: |
-      Role: Senior Modeling Data Scientist. 
-      Focus: Exploratory patterns, model justification, and performance metrics.
-      Context: {context}.
-      Notebook Stats: {stats}.
-      Extract:
-      1. Exploratory Summary: Patterns found in target/features.
-      2. Model Logic: Justification for the algorithm/hyperparameters.
-      3. Results: Summary of metrics (RMSE, F1, etc.) found in the output cells.
-      Return ONLY JSON: {
-        "exploratory_summary": "...",
-        "model_justification": "...",
-        "performance_evaluation": "...",
-        "feature_engineering_notes": [],
-        "math_rigor_score": 5
-      }
-
-  tech_lead:
-    mode: "Strict Production"
-    system_prompt: |
-      Role: Technical Lead.
-      Focus: Redundancy, modularity, and technical debt.
-      Input: Summary of all analyzed notebooks: {stats}
-      Global Context: {context}
-      Return ONLY JSON: {"project_health": "...", "technical_debt_warnings": [], "deployment_readiness_score": 5, "refactoring_roadmap": []}
-
-  strategic_lead:
-    mode: "Project Synthesis"
-    system_prompt: |
-      Role: Strategic Tech Lead.
-      Focus: Business alignment, scalability, and long-term roadmap.
-      Context: {context}.
-      Aggregated Insights: {stats}.
-      Return ONLY JSON: {
-        "strategic_alignment": "...",
-        "scalability_risks": [],
-        "production_roadmap": "...",
-        "investment_priority": "Low/Med/High"
-      }
+  - architect
+  - scientist
+  - modeling_ds
+  - tech_lead
+  - strategic_lead

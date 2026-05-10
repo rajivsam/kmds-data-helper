@@ -1,117 +1,118 @@
+import yaml
 import json
+import nbformat
 from pathlib import Path
 from typing import List, Dict, Any
-from kmds_data_helper.utils import parse_notebook_with_outputs, save_kmds_json
 
 class KMDSEngine:
-    def __init__(self, llm_client):
-        """Initializes with an LLM client."""
-        self.llm = llm_client
-
-    def _safe_json_parse(self, data: Any, fallback_key: str) -> Dict:
-        """Handles both raw strings and dictionaries with key normalization."""
-        parsed = {}
-        if isinstance(data, dict):
-            parsed = data
-        else:
-            try:
-                # Clean markdown and parse string
-                clean_text = str(data).strip().replace("```json", "").replace("```", "").strip()
-                parsed = json.loads(clean_text)
-            except Exception:
-                parsed = {fallback_key: str(data)}
-
-        # --- KEY NORMALIZATION ---
-        if isinstance(parsed, dict):
-            # Find any key containing "score" and map it to quality_score
-            for k in list(parsed.keys()):
-                if "score" in k.lower():
-                    val = parsed.pop(k)
-                    try:
-                        parsed["quality_score"] = int(float(val))
-                    except:
-                        parsed["quality_score"] = 0
-            
-            # Ensure required keys exist for the API contract
-            if "quality_score" not in parsed:
-                parsed["quality_score"] = 0
-            if fallback_key not in parsed:
-                parsed[fallback_key] = "No insight found"
+    def __init__(self, llm_client, config_dir: Path, config_file: Path):
+        """
+        Initializes the engine and synchronizes the LLMClient with the workspace.
+        """
+        self.llm_client = llm_client
+        self.config_dir = config_dir
+        self.config_file = config_file
         
-        return parsed
+        # 1. Load the master configuration
+        with open(self.config_file, 'r') as f:
+            self.config = yaml.safe_load(f)
+        
+        # 2. Sync the LLMClient to look at the same project YAML
+        if hasattr(self.llm_client, 'set_config_path'):
+            self.llm_client.set_config_path(str(self.config_file))
+            print(f"DEBUG: Synchronized LLMClient with config: {self.config_file.name}")
+        
+        # 3. Prime the client's internal persona dictionary as a fail-safe
+        self._prime_llm_client_personas()
 
-    def process_notebook_stage(self, nb_path: Path) -> Dict:
-        """Stage 1: Multi-Persona Notebook Analysis."""
-        print(f"[*] Analyzing Notebook: {nb_path.name}")
+    def _prime_llm_client_personas(self):
+        """Injects persona data into the LLMClient's internal lookup dictionary."""
+        persona_dir = self.config_dir / "personas"
+        if not persona_dir.exists():
+            return
+
+        if not hasattr(self.llm_client, 'personas') or not isinstance(self.llm_client.personas, dict):
+            self.llm_client.personas = {}
+
+        for p_file in persona_dir.glob("*.yaml"):
+            p_key = p_file.stem 
+            with open(p_file, 'r') as f:
+                try:
+                    p_data = yaml.safe_load(f)
+                    self.llm_client.personas[p_key] = p_data
+                except Exception as e:
+                    print(f"      [!] Failed to load {p_file.name}: {e}")
         
-        # Default structure to prevent crashes
-        result = {
-            "notebook_name": nb_path.name,
-            "scientist_insight": {"quality_score": 0, "insight": "Pending..."},
-            "modeling_insight": {"exploratory_summary": "Pending...", "model_justification": "N/A"}
-        }
-        
+        print(f"DEBUG: Primed LLMClient with {len(self.llm_client.personas)} local personas.")
+
+    def _safe_json_parse(self, response_data: Any) -> Dict[str, Any]:
+        """Robust parser to handle list or string responses from the LLMClient."""
         try:
-            full_content = parse_notebook_with_outputs(str(nb_path))
-            
-            # Pass 1: Scientist
-            print(f"    -> Running Scientist Persona...")
-            sci_raw = self.llm.call_persona(
-                persona="scientist",
-                context=full_content,
-                stats="REQUIRED JSON: {quality_score: int, insight: string}"
-            )
-            result["scientist_insight"] = self._safe_json_parse(sci_raw, "insight")
-            
-            # Pass 2: Modeling DS
-            print(f"    -> Running Modeling DS Persona...")
-            mod_raw = self.llm.call_persona(
-                persona="modeling_ds",
-                context=full_content,
-                stats="REQUIRED JSON: {exploratory_summary: string, model_justification: string}"
-            )
-            result["modeling_insight"] = self._safe_json_parse(mod_raw, "exploratory_summary")
-            
-            return result
-        except Exception as e:
-            print(f" [!] Error processing {nb_path.name}: {e}")
-            return result
+            # Extract content if response is a list (Chat history format)
+            if isinstance(response_data, list):
+                if len(response_data) > 0 and isinstance(response_data[-1], dict):
+                    text = response_data[-1].get('content', str(response_data[-1]))
+                else:
+                    text = str(response_data[-1]) if response_data else ""
+            else:
+                text = response_data
 
-    def run_stage_1(self, notebook_dir: str) -> List[Dict]:
+            if isinstance(text, dict):
+                return text
+
+            clean_text = str(text).strip()
+            if "```json" in clean_text:
+                clean_text = clean_text.split("```json")[-1].split("```")[0]
+            elif "```" in clean_text:
+                clean_text = clean_text.split("```")[1]
+            
+            return json.loads(clean_text.strip())
+        except Exception:
+            return {}
+
+    def _format_notebook_context(self, nb_path: Path) -> str:
+        """Extracts code and execution results for high-fidelity context."""
+        try:
+            with open(nb_path, 'r', encoding='utf-8') as f:
+                nb = nbformat.read(f, as_version=4)
+            context = []
+            for cell in nb.cells:
+                if cell.cell_type == 'code':
+                    source = cell.source.strip()
+                    # Capture only plain text execution results
+                    outputs = [str(out.data.get('text/plain', '')) 
+                               for out in cell.get('outputs', []) 
+                               if out.output_type == 'execute_result']
+                    context.append(f"CODE:\n{source}\nRESULT:\n{' '.join(outputs)}")
+            return "\n---\n".join(context)[:5000]
+        except Exception as e:
+            return f"Error reading notebook {nb_path.name}: {str(e)}"
+
+    def run_audit(self, notebook_paths: List[str]) -> List[Dict[str, Any]]:
+        """Main audit loop utilizing the verified LLMClient handshake."""
         results = []
-        nb_folder = Path(notebook_dir)
-        for nb_file in sorted(nb_folder.glob("*.ipynb")):
-            insight = self.process_notebook_stage(nb_file)
-            results.append(insight)
-        return results
-
-    def run_strategic_synthesis(self, stage_1_results: List[Dict], output_dir: str):
-        """Stage 2: Global project-wide synthesis."""
-        print("[*] Running Strategic Synthesis...")
-        summary_stats = str(stage_1_results)
+        persona_keys = self.config.get("personas", [])
         
-        try:
-            strategic_raw = self.llm.call_persona(
-                persona="strategic_lead",
-                context="Full Project Synthesis",
-                stats=f"REQUIRED JSON: {{strategic_alignment: string, production_roadmap: string}} DATA: {summary_stats}"
-            )
+        for nb_path_str in notebook_paths:
+            nb_path = Path(nb_path_str)
+            nb_context = self._format_notebook_context(nb_path)
+            nb_entry = {"notebook_name": nb_path.name}
             
-            report_dict = self._safe_json_parse(strategic_raw, "strategic_alignment")
-            
-            # Ensure synthesis keys exist
-            if "production_roadmap" not in report_dict:
-                report_dict["production_roadmap"] = "N/A"
-            
-            save_path = Path(output_dir) / "kmds_strategic_summary.json"
-            save_kmds_json(
-                {"strategic_report": report_dict, "notebook_details": stage_1_results},
-                str(save_path)
-            )
-            return report_dict
-        except Exception as e:
-            print(f" [!] Strategic Synthesis Failed: {e}")
-            return {
-                "strategic_alignment": f"Synthesis Error: {str(e)}", 
-                "production_roadmap": "N/A"
-            }
+            for p_key in persona_keys:
+                print(f"    [>] Running {p_key.capitalize()} analysis for {nb_path.name}...")
+                try:
+                    # Final Aligned Handshake
+                    response = self.llm_client.call_persona(
+                        p_key, 
+                        f"Audit this notebook: {nb_path.name}", 
+                        nb_context
+                    )
+                    nb_entry[f"{p_key}_insight"] = self._safe_json_parse(response)
+                except Exception as e:
+                    print(f"      [!] Client Error on {p_key}: {e}")
+                    nb_entry[f"{p_key}_insight"] = {}
+
+            results.append(nb_entry)
+        
+        print(f"\n[ENGINE] Audit Complete for {len(notebook_paths)} notebooks.")
+        return results
