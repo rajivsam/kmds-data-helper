@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: kmds-data-dictionary-helper
+Version: 0.1.0
+Summary: AI-powered data dictionary generator for KMDS
+Requires-Python: >=3.12
+Requires-Dist: pymupdf4llm>=0.0.12
+Requires-Dist: ollama>=0.1.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: dataprofiler[reports]<=0.13.4
+Requires-Dist: setuptools<70.0.0
+Requires-Dist: urllib3<2.0.0
+Requires-Dist: rich>=13.0.0

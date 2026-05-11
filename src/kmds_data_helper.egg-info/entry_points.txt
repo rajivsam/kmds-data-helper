@@ -1,0 +1,2 @@
+[console_scripts]
+kmds-helper = kmds_data_helper.main:main

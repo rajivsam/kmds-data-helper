@@ -1,14 +1,32 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+# --- KMDS Data Helper: Git Ignore ---
 
-# Virtual environments
-.venv
-*.csv
-*.parquet
-__pycache__/
+# Environments & Virtualization
 .venv/
+venv/
+ENV/
+.env
+
+# Sphinx Documentation Build Artifacts
+docs/build/
+_build/
+
+# Pytest & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+tests/.pytest_cache/
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Project Specific Output
+output/
+*.json
+!kmds_config.yaml
+
+# OS Specific
+.DS_Store
+Thumbs.db
