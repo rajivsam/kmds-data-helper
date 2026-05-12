@@ -1,28 +1,20 @@
 ---
-## Step 2: Session Stash & Check-in Status
-You are now at a "Certified Stable" milestone. Here is the stash to preserve this state.
-Stash Name: kmds_v2_verified_docs_stable
-Current State Summary:
+# Session Stash: May 12, 2026
 
-* Infrastructure: uv project synced with pytest dev-dependencies.
-* Core Logic: KMDSEngine and KMDSReportService are fully functional.
-* Verification: All functional tests (test_api.py, test_gatekeeper.py) are GREEN.
-* Schema: API correctly returns and parses summary_text and entities.
-* Docs: Sphinx initialized with TRACE_FLOW.md and successful local HTML build.
-* Pre-reqs: pre_req_check.py successfully validates KMDS project structures.
+### ✅ Status: "Functional Baseline Verified"
+- **Clobber Recovery**: Architect, Scientist, and Tech Lead logic restored and modularized.
+- **Verification**: Tech Lead batch (6 notebooks) passed in ~10 minutes on 6GB VRAM.
+- **Folder Discovery**: Successfully moved persona logic out of YAML and into `personas/` folder.
+- **Utility**: `kmds_check.py` created to validate the 5-Pillar structure.
 
-------------------------------
-## Step 3: Pick-up Plan (The Packaging Step) [2] 
-When you return, we will execute the final phase of our roadmap.
-Packaging Roadmap:
+### 🚀 Next Steps
+1. **Parallel Stress Test**: Confirm `pytest -n 3` handles the asynchronous queueing without timeout.
+2. **Subset Filtering**: Add `requested_personas` list to `AnalysisRequest` in `api.py`.
+3. **Packaging**: Formally add `kmds-check` and `kmds-analyze` as `[project.scripts]` in `pyproject.toml`.
+4. **Knowledge Graph**: Prepare the JSON output for ingestion into a Graph Database (Nodes: Notebook, Persona, Insight).
 
-   1. Entry Point: Add a [project.scripts] section to pyproject.toml.
-   2. CLI Command: Map the command kmds-helper to your api:main or a new CLI entry.
-   3. Local Install: Run uv pip install -e . to turn your local repo into a system-wide tool.
+### 🚨 Critical Instructions for next session
+- Read `gemini/feature.md` and `gemini/arch.md` before refactoring.
+- Maintain the `Semaphore(1)` at all costs to prevent OOM on the 3050.
 
-Instruction: You can now safely git add ., git commit -m "Verified stable audit with Sphinx docs", and git push.
-Ready to sign off for that 2-hour break? Packaging will be waiting for you!
-
-[1] [https://www.datacamp.com](https://www.datacamp.com/tutorial/gitignore)
-[2] [https://paul-moores-notes.readthedocs.io](https://paul-moores-notes.readthedocs.io/en/latest/sphinx.html)
 ---

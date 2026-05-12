@@ -1,55 +1,70 @@
+import os
+import yaml
 import json
+from pathlib import Path
 from ollama import Client
-from kmds_data_helper.config_manager import ConfigManager
 
 class LLMClient:
     """
-    Standardized LLM client for the KMDS Data Helper.
-    Handles persona-based prompting and JSON enforcement.
+    Handles persona-based prompting by discovering YAML files in the personas/ folder.
     """
-    def __init__(self, config_path="kmds_config.yaml", model="qwen2.5-coder:7b"):
+    def __init__(self, config_path="data", model="qwen2.5-coder:7b"):
         self.client = Client(host='http://localhost:11434')
         self.model = model
-        # Store the path so we can update it if needed
-        self.config_path = config_path
-        self.cfg = ConfigManager(self.config_path)
+        self.workspace = Path(config_path)
 
-    def set_config_path(self, new_path: str):
+    def get_available_personas(self) -> list[str]:
         """
-        Updates the ConfigManager to point to a new workspace.
-        This fixes the 'list indices' error by ensuring personas are found.
+        Scans the personas/ directory for .yaml files.
+        Returns the exact display names used for filtering in tests.
         """
-        self.config_path = new_path
-        self.cfg = ConfigManager(new_path)
-
-    def call_persona(self, persona: str, context: str, stats: str) -> str:
-        """
-        Fetches system prompt from YAML and generates response.
-        """
-        persona_data = self.cfg.get_persona(persona)
+        persona_dir = self.workspace / "personas"
+        if not persona_dir.exists():
+            return []
         
-        # Validation: If the persona wasn't found, return an error JSON
-        if not persona_data or 'system_prompt' not in persona_data:
-            return json.dumps({"error": f"Persona {persona} not found in {self.config_path}"})
+        # Maps 'tech_lead.yaml' -> 'Tech Lead'
+        return [
+            f.stem.replace('_', ' ').title() 
+            for f in persona_dir.glob("*.yaml")
+        ]
 
-        system_prompt = persona_data['system_prompt']
-        
-        # Manual replacement to avoid curly brace errors in JSON
-        prompt = system_prompt.replace("{context}", context).replace("{stats}", stats)
+    def call_persona(self, persona_display_name: str, context: str, stats: str) -> str:
+        """
+        Loads the specific YAML file for a persona and executes the LLM call.
+        """
+        # Ensure we look for 'tech_lead.yaml' even if passed 'Tech Lead'
+        file_name = persona_display_name.lower().replace(" ", "_") + ".yaml"
+        persona_path = self.workspace / "personas" / file_name
+
+        if not persona_path.exists():
+            return json.dumps({
+                "error": f"Persona config not found at {persona_path}",
+                "persona": persona_display_name
+            })
 
         try:
+            with open(persona_path, 'r') as f:
+                config = yaml.safe_load(f)
+            
+            system_prompt = config.get('system_prompt', '')
+            if not system_prompt:
+                return json.dumps({"error": f"No system_prompt found in {file_name}"})
+
+            # Placeholder replacement
+            final_prompt = system_prompt.replace("{context}", context).replace("{stats}", stats)
+
+            # JSON-formatted generation
             response = self.client.generate(
                 model=self.model,
-                prompt=prompt,
-                format="json", 
-                options={"num_ctx": 8192} 
+                prompt=final_prompt,
+                format="json",
+                options={"num_ctx": 8192}
             )
 
             return response.get('response', '{}')
 
         except Exception as e:
             return json.dumps({
-                "error": f"LLM Generation Failed: {str(e)}", 
-                "quality_score": 0, 
-                "insight": "N/A"
+                "error": f"LLM Generation Failed: {str(e)}",
+                "persona": persona_display_name
             })

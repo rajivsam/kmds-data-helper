@@ -10,3 +10,9 @@ fastapi>=0.136.1
 uvicorn>=0.46.0
 requests>=2.32.5
 pytest>=9.0.3
+pypdf>=6.11.0
+
+[test]
+pytest
+pytest-xdist
+requests

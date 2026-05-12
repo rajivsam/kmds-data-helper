@@ -2,7 +2,6 @@ import importlib.resources as pkg_resources
 from pathlib import Path
 from typing import Optional, List
 import yaml
-# Assuming engine.py is in the same directory
 from .engine import KMDSEngine 
 
 class KMDSReportService:
@@ -11,18 +10,9 @@ class KMDSReportService:
     validation, and orchestration of the KMDSEngine.
     """
     
-    # The source of truth for developers to check the spec
     REPO_URL = "https://github.com"
 
     def __init__(self, llm_client, config_path: Optional[str] = None, output_dir: str = "output"):
-        """
-        Initializes the service.
-        
-        :param llm_client: The LLM client instance (e.g., OpenAI, Anthropic).
-        :param config_path: Path to a directory (e.g., 'data2') or a specific 
-                           YAML file. Falls back to package defaults if None.
-        :param output_dir: Where generated reports will be stored.
-        """
         # 1. Resolve Pathing
         path = Path(config_path) if config_path else self._get_default_data_path()
         
@@ -33,68 +23,77 @@ class KMDSReportService:
             self.config_dir = path.parent
             self.config_file = path
 
-        # 2. Validate & Complain (Feature 2)
+        # 2. Validate the 5-Pillar Structure
         self._validate_and_summarize_config()
 
         # 3. Setup Infrastructure
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # 4. Initialize Engine (Feature 1)
+        # 4. Initialize Engine
         self.engine = KMDSEngine(llm_client, config_dir=self.config_dir, config_file=self.config_file)
 
     def _validate_and_summarize_config(self):
         """
-        Ensures the environment is ready. If not, provides a diagnostic 
-        report with a link to the repo spec.
+        STRICT VALIDATION: Confirms existence of folders and correct file types.
+        Supports: notebooks, personas, documents, data_dictionary, and data.
         """
+        validation_map = {
+            "notebooks": "*.ipynb",
+            "personas": "*.yaml",
+            "documents": "*.pdf",
+            "data_dictionary": "*",
+            "data": "*" 
+        }
+        
         errors = []
+        summary = {}
 
-        # Check: Does the YAML file exist?
-        if not self.config_file.exists():
-            errors.append(f"CONFIG NOT FOUND: Expected file at {self.config_file.absolute()}")
-
-        # Check: Is the mandatory 'notebooks' folder present?
-        notebooks_path = self.config_dir / "notebooks"
-        if not notebooks_path.exists() or not notebooks_path.is_dir():
-            errors.append(f"MISSING DIRECTORY: 'notebooks/' folder is required in {self.config_dir.absolute()}")
-        elif not list(notebooks_path.glob("*.ipynb")):
-            errors.append(f"NO DATA: 'notebooks/' exists but contains no .ipynb files.")
+        for folder, pattern in validation_map.items():
+            target_path = self.config_dir / folder
+            
+            # 1. Existence Check
+            if not target_path.exists() or not target_path.is_dir():
+                errors.append(f"MISSING DIRECTORY: '{folder}/' must exist in {self.config_dir.resolve()}")
+                continue
+            
+            # 2. File Type & Content Check
+            files = list(target_path.glob(pattern))
+            
+            # Allow 'data' and 'data_dictionary' to be empty if just starting, 
+            # but notebooks and personas are mandatory for an audit.
+            if not files and folder in ["notebooks", "personas"]:
+                errors.append(f"EMPTY/REQUIRED DATA: '{folder}/' exists but has no {pattern} files.")
+            else:
+                summary[folder] = len(files)
 
         if errors:
-            print(f"\n{'!'*70}")
-            print("KMDS CONFIGURATION ERROR")
-            print(f"{'!'*70}")
+            print(f"\n{'!'*70}\nKMDS STRUCTURE VALIDATION FAILED\n{'!'*70}")
             for err in errors:
-                print(f" ERROR: {err}")
-            print(f"\nHOW TO FIX:")
-            print(f" 1. Ensure your config directory (e.g., 'data2') follows the expected structure.")
-            print(f" 2. Check the correct YAML spec and folder layout at:")
-            print(f"    {self.REPO_URL}")
-            print(f"{'!'*70}\n")
-            raise ValueError("KMDS failed to initialize. See diagnostic report above.")
+                print(f" -> {err}")
+            print(f"\nREQUIRED LAYOUT:\n{self.config_dir.resolve()}/\n  ├── notebooks/ (.ipynb)\n  ├── personas/ (.yaml)\n  ├── documents/ (.pdf)\n  ├── data_dictionary/ (meta-data)\n  └── data/ (csv/parquet)\n{'!'*70}\n")
+            raise ValueError("Directory structure validation failed. Audit aborted.")
 
         # Success Summary
-        nb_count = len(list(notebooks_path.glob("*.ipynb")))
-        print(f"--- KMDS Audit Initialized ---")
-        print(f"Config Home: {self.config_dir.name}")
-        print(f"Active Spec: {self.config_file.name}")
-        print(f"Resources:   {nb_count} notebook(s) found for analysis.")
-        print(f"------------------------------\n")
+        print(f"--- KMDS Structure Verified ---")
+        for folder, count in summary.items():
+            print(f" - {folder.capitalize()}: {count} file(s) identified.")
+        print("-" * 31 + "\n")
 
     def _get_default_data_path(self) -> Path:
-        """Finds the 'data' folder inside the installed package."""
         try:
-            # For Python 3.9+ using importlib.resources
             return pkg_resources.files("kmds_data_helper") / "data"
-        except (ImportError, AttributeError, TypeError):
-            # Fallback for local development
+        except Exception:
             return Path("data")
 
-    def run_full_audit(self, notebook_paths: Optional[List[str]] = None):
-        """Standard entry point for a complete multi-persona audit."""
+    async def run_full_audit(self, notebook_paths: Optional[List[str]] = None):
+        """Asynchronous entry point for FastAPI."""
         if not notebook_paths:
-            nb_dir = self.config_dir / "notebooks"
+            # Force absolute pathing to find the notebooks reliably
+            nb_dir = (self.config_dir / "notebooks").resolve()
             notebook_paths = [str(p) for p in nb_dir.glob("*.ipynb")]
             
-        return self.engine.run_audit(notebook_paths)
+        if not notebook_paths:
+            return []
+            
+        return await self.engine.run_full_audit_async(notebook_paths)

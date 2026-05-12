@@ -15,7 +15,7 @@ src/kmds_data_helper.egg-info/dependency_links.txt
 src/kmds_data_helper.egg-info/entry_points.txt
 src/kmds_data_helper.egg-info/requires.txt
 src/kmds_data_helper.egg-info/top_level.txt
-tests/test_api.py
 tests/test_engine_cli.py
 tests/test_gatekeeper.py
 tests/test_kmds.py
+tests/test_personas.py

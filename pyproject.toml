@@ -16,17 +16,40 @@ dependencies = [
     "uvicorn>=0.46.0",
     "requests>=2.32.5",
     "pytest>=9.0.3",
+    "pypdf>=6.11.0",
 ]
 
-[project.scripts]
-kmds-helper = "kmds_data_helper.main:main"
+
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-xdist",
+    "requests"
+]
+[project.scripts]
+kmds-check = "kmds_data_helper.pre_flight:validate_environment"
+kmds-test = "pytest:main"
+
 [tool.pytest.ini_options]
-addopts = "-W ignore::requests.RequestsDependencyWarning"
+# Ensures pytest only runs the new persona tests and stays away from broken legacy files
+testpaths = ["tests/test_personas.py"]
+python_files = "test_*.py"
+
+# -n 3: Runs 3 parallel workers
+# -v: Verbose output
+# --disable-warnings: Hides those annoying urllib3 version mismatch logs
+addopts = "-n 3 -v --disable-warnings"
+
 filterwarnings = [
-    "ignore::requests.RequestsDependencyWarning",
+    "ignore:urllib3.*match a supported version:requests.RequestsDependencyWarning",
+]
+
+[dependency-groups]
+dev = [
+    "pytest-xdist>=3.8.0",
 ]
