@@ -1,18 +1,22 @@
 # Architectural Guardrails
 
-### 1. VRAM & Concurrency Control
+### 1. Hardware Constraints
 
-- **Hardware Limit**: 6GB VRAM (RTX 3050).
-- **Concurrency Pattern**: `asyncio.Semaphore(1)` is mandatory in the Engine.
-- **Safety**: Multiple API requests (FastAPI) are queued; only one LLM inference is processed at a time.
+* **VRAM Limit**: 6GB (RTX 3050).
+* **Context Window**: Prompts must be concise to fit within \~4k-8k tokens (depending on model quantization).
 
-### 2. Execution Pattern
+### 2. Concurrency & Safety
 
-- **Engine**: Handles file I/O, notebook extraction, and the persona loop.
-- **Service**: Acts as the "Gatekeeper" performing strict path resolution and validation.
-- **LLM Client**: Manages the Ollama interface and JSON formatting.
+* **The Golden Rule**: `asyncio.Semaphore(1)` must wrap every LLM inference call in `engine.py`.
+* **Traffic Pattern**: The FastAPI layer accepts parallel requests (High Throughput), but the Engine processes them sequentially (Safe Execution).
+* **Thread Safety**: Use `asyncio.get_running_loop()` when offloading synchronous LLM calls to `run_in_executor`.
 
-### 3. Event Loop Stability
+### 3. Concern Separation
 
-- Use `asyncio.get_running_loop()` for offloading synchronous calls to `run_in_executor`.
-- Ensure all paths use `.resolve()` to avoid CWD (Current Working Directory) mismatches.
+* **`service.py`**: The Gatekeeper. Handles path resolution (`.resolve()`) and strict validation.
+* **`engine.py`**: The Orchestrator. Handles file I/O and the Persona Loop.
+* **`llm_client.py`**: The Interface. Handles dynamic discovery and JSON formatting.
+
+### 4. Path Robustness
+
+* All file operations must use `pathlib.Path.resolve()` to ensure the server works correctly regardless of the shell's Current Working Directory (CWD).
