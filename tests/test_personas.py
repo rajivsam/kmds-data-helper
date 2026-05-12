@@ -10,7 +10,7 @@ API_URL = "http://localhost:8000/analyze"
 # POINT OF TRUTH: Verified active workspace
 VALID_WORKSPACE = "/home/rajiv/programming/kmds_data_helper"
 
-@pytest.mark.parametrize("persona", ["Architect", "Scientist", "Tech Lead"])
+@pytest.mark.parametrize("persona", ["Architect", "Scientist", "Tech Lead", "Modeling Ds"])
 def test_persona_audit(persona):
     """
     Validates that the discovery engine finds the persona file in the personas/ 
@@ -20,7 +20,7 @@ def test_persona_audit(persona):
 
     try:
         # LLM generation window
-        response = requests.post(API_URL, json=payload, timeout=900)
+        response = requests.post(API_URL, json=payload, timeout=3600)
         response.raise_for_status()
         data = response.json()
 

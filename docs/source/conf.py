@@ -1,32 +1,35 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://sphinx-doc.org
+import os
+import sys
+
+# -- Path setup --------------------------------------------------------------
+# Informs Sphinx where your source code is relative to this file
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
-# https://sphinx-doc.org#project-information
-
 project = 'KMDS Data Helper'
-copyright = '2024, Rajiv'
-author = 'Rajiv'
-release = '0.0.1'
+copyright = '2024, Rajiv Sam'
+author = 'Rajiv Sam'
 
 # -- General configuration ---------------------------------------------------
-# https://sphinx-doc.org#general-configuration
-
 extensions = [
-    "myst_parser",
-    "sphinx_rtd_theme",
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'myst_parser',  # Critical for .md files
 ]
 
+# Map extensions to parsers
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
+
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.venv']
 
 # -- Options for HTML output -------------------------------------------------
-# https://sphinx-doc.org#options-for-html-output
-
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
-# Set the master doc to index
+# The master toctree document
 master_doc = 'index'
