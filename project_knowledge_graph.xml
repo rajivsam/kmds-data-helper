@@ -1,0 +1,456 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://test.org/kmds/kmds.owl"
+         xmlns="http://test.org/kmds/kmds.owl#">
+
+<owl:Ontology rdf:about="http://test.org/kmds/kmds.owl"/>
+
+<owl:ObjectProperty rdf:about="#is_exploratory_observation_of_type">
+  <rdfs:domain rdf:resource="#ExploratoryObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_exploratory_fact">
+  <rdfs:domain rdf:resource="#ExploratoryObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_exploratory_fact_sequence">
+  <rdfs:domain rdf:resource="#ExploratoryObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_KB_name">
+  <rdfs:domain rdf:resource="#KnowledgeApplicationWorkflow"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  <rdfs:domain rdf:resource="#KnowledgeExtractionExperimentationWorkflow"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#is_developed_in">
+  <rdfs:domain rdf:resource="#DataRepresentation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#data_representation_for_exploration">
+  <rdfs:domain rdf:resource="#KnowledgeApplicationWorkflow"/>
+  <rdfs:range rdf:resource="#DataRepresentation"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#is_data_engg_observation_of_type">
+  <rdfs:domain rdf:resource="#DataEnggObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_data_engg_fact">
+  <rdfs:domain rdf:resource="#DataEnggObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_data_engg_fact_sequence">
+  <rdfs:domain rdf:resource="#DataEnggObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#is_modelling_choice_observation_of_type">
+  <rdfs:domain rdf:resource="#ModellingChoiceObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_modelling_choice_fact">
+  <rdfs:domain rdf:resource="#ModellingChoiceObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_modelling_choice_fact_sequence">
+  <rdfs:domain rdf:resource="#ModellingChoiceObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#is_model_selection_observation_of_type">
+  <rdfs:domain rdf:resource="#ModelSelectionObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_model_selection_fact">
+  <rdfs:domain rdf:resource="#ModelSelectionObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_model_selection_fact_sequence">
+  <rdfs:domain rdf:resource="#ModelSelectionObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#depends_on">
+  <rdfs:domain rdf:resource="#KnowledgeExtractionExperimentationWorkflow"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="#KnowledgeExtractionExperimentationWorkflow"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#is_experimental_observation_of_type">
+  <rdfs:domain rdf:resource="#ExperimentalObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_experimental_fact">
+  <rdfs:domain rdf:resource="#ExperimentalObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#log_experimental_fact_sequence">
+  <rdfs:domain rdf:resource="#ExperimentalObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_description">
+  <rdfs:domain rdf:resource="#PerformanceMeasure"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#is_computed_in">
+  <rdfs:domain rdf:resource="#PerformanceMeasure"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#business_performance_measure">
+  <rdfs:domain rdf:resource="#KnowledgeApplicationWorkflow"/>
+  <rdfs:range rdf:resource="#PerformanceMeasure"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#experiment_performance_measure">
+  <rdfs:domain rdf:resource="#KnowledgeExtractionExperimentationWorkflow"/>
+  <rdfs:range rdf:resource="#PerformanceMeasure"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#contains_experimental_obs">
+  <rdfs:domain rdf:resource="#KnowledgeApplicationWorkflow"/>
+  <rdfs:range rdf:resource="#ExploratoryObservation"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_exploratory_observations">
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="#ExploratoryObservation"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_data_representation_observations">
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="#DataRepresentationObservation"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_modeling_choice_observations">
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="#ModellingChoiceObservation"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_model_selection_observations">
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="#ModelSelectionObservation"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_experimental_observations">
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="#ExperimentalObservation"/>
+</owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="#description">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#name">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Workflow"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#intent">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#KMObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#exploratory_observation_type">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#ExploratoryObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#data_representation_observation_type">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#DataRepresentationObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#modelling_choice_observation_type">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#ModellingChoiceObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#model_selection_observation_type">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#ModelSelectionObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#experimental_observation_type">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#ExperimentalObservation"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#finding">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#finding_sequence">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+</owl:DatatypeProperty>
+
+<owl:Class rdf:about="#ExploratoryObservation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf rdf:resource="#KMObservation"/>
+</owl:Class>
+
+<owl:Class rdf:about="#KnowledgeApplicationWorkflow">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf rdf:resource="#Workflow"/>
+</owl:Class>
+
+<owl:Class rdf:about="#KnowledgeExtractionExperimentationWorkflow">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf rdf:resource="#Workflow"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DataRepresentation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DataEnggObservation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ModellingChoiceObservation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf rdf:resource="#KMObservation"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ModelSelectionObservation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ExperimentalObservation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#PerformanceMeasure">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Workflow">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#KMObservation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DataRepresentationObservation">
+  <rdfs:subClassOf rdf:resource="#KMObservation"/>
+</owl:Class>
+
+<owl:NamedIndividual rdf:about="#kmds_project_workflow">
+  <rdf:type rdf:resource="#KnowledgeApplicationWorkflow"/>
+  <has_model_selection_observations rdf:resource="#modelselectionobservation1"/>
+  <has_model_selection_observations rdf:resource="#modelselectionobservation8"/>
+  <has_model_selection_observations rdf:resource="#modelselectionobservation9"/>
+  <has_exploratory_observations rdf:resource="#exploratoryobservation4"/>
+  <has_experimental_observations rdf:resource="#experimentalobservation6"/>
+  <has_experimental_observations rdf:resource="#experimentalobservation7"/>
+  <has_model_selection_observations rdf:resource="#modelselectionobservation10"/>
+  <description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Workflow updated from natural-language observation ingestion.</description>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation1">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The data spans transactions at the store over the years 2010 through 2011</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation2">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Let's set the date for this exercise to be the first week after the business quarter in the year 2010</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation1">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">This phase will be modelled with the Knowledge Extraction Experiment Workflow</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Experimental Observation</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation3">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The raw data set covers the period 2010 and 2011</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#exploratoryobservation1">
+  <rdf:type rdf:resource="#ExploratoryObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">So we subset the data corresponding to this period</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</finding_sequence>
+  <exploratory_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relevance Observation</exploratory_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation4">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The modelling approach is illustrated on the data for Q1 2010</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation5">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The data for Q2 2010 is also provided and can be used to evaluate or replicate the approach on a new dataset</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation2">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">For those interested in exploring this tool, replicating the analysis for the first quarter on the data from the second quarter may be a good way to gain familiarity with the tool</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Experimental Conjecture</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#exploratoryobservation2">
+  <rdf:type rdf:resource="#ExploratoryObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Such issues are called _attribute noise_ in the notebooks</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</finding_sequence>
+  <exploratory_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Data Quality Observation</exploratory_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation6">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">We could compute the sales of each of the store inventory items for each day of the first quarter (there are 75 business days in the first quarter)</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation3">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">We could then analyze this sales per day representation from a similarity view point and evaluate if we can find patterns of daily purchases at the store during the first quarter</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypothesis Statement</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation4">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">If you went to the online store and purchased five types of items, then your purchase (transaction) would generate one line in the dataset for each of the five item types, so your purchase would generate five lines</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypothesis Statement</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation7">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">This information for the first quarter of 2010 is the _raw data representation_</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation5">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">As discussed in the exploratory data section, compute a representation where we aggregate all the sales transactions per day and then represent the daily sales for the quarter as a vector that has length equal to the size of the inventory</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypothesis Statement</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#exploratoryobservation3">
+  <rdf:type rdf:resource="#ExploratoryObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nevertheless, PCA is a good baseline and does yield useful information that helps us with the goals of this task</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</finding_sequence>
+  <exploratory_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relevance Observation</exploratory_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation8">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;div style="text-align: justify"&gt; ## An Example of Using KMDS in a Machine Learning Use Case An example of using KMDS in a machine learning use case is illustrated with a real world use case from the retail domain. This is a supplement to implement the [the recipe](../workflow_recipe.md) for a machine learning use case. The data for this use case is a set of transactions at an online retail store based in the UK. The data is available from the [UCI machine learning repository](https://archive.ics.uci.edu/dataset/502/online+retail+ii). The data spans transactions at the store over the years 2010 through 2011. The task description for this use case is given below.</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation9">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">### Task Description Let's set the date for this exercise to be the first week after the business quarter in the year 2010. The store management would like to understand the shopping activity in the store in the previous quarter. The store is visited by many customers and there is variation in the items that are purchased in the store every day. They would also like to apply data science to summarize the shopping activity in the store in the first quarter. This would help them understand customer taste in that time period. This kind of analysis can inform inventory planning tasks for the store. They have not done developed a model like this before. They would like to approach the model development guided by principled experiments to understand the characteristics of the data. This phase will be modelled with the Knowledge Extraction Experiment Workflow. This sketch illustrates how KMDS can be used to log data from an experimental workflow.</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#exploratoryobservation4">
+  <rdf:type rdf:resource="#ExploratoryObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">## Data Processing Approach 1. The raw data set covers the period 2010 and 2011. We only need the first quarter data for this analysis. So we subset the data corresponding to this period. This [notebook](/examples_of_use/machine_learning/example_ml_data_subsetting.ipynb) has the code for doing this. The original dataset can be obtained from the [UCI machine learning repository](https://archive.ics.uci.edu/dataset/502/online+retail+ii)
+2. The modelling approach is illustrated on the data for Q1 2010. The data for Q2 2010 is also provided and can be used to evaluate or replicate the approach on a new dataset. This is the analysis that would be performed by the data science team at the end of the second quarter. For those interested in exploring this tool, replicating the analysis for the first quarter on the data from the second quarter may be a good way to gain familiarity with the tool.</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</finding_sequence>
+  <exploratory_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relevance Observation</exploratory_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation6">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. It identifies the issues in the raw data set that prevent us from developing an understanding of the raw data, for example, we can have mixed types in raw data set. A price could have a string value. This prevents us from using basic statistical tools to analyze the data. Such issues are called _attribute noise_ in the notebooks.
+2. It removes _attribute noise_
+3. Given our task description, we evaluate transformations of the raw data that can help us achieve the task goal. Since our goal is to understand customer behavior in the first quarter. We could compute the sales of each of the store inventory items for each day of the first quarter (there are 75 business days in the first quarter). We could then analyze this sales per day representation from a similarity view point and evaluate if we can find patterns of daily purchases at the store during the first quarter.  In other words, we _explore_ ways to develop _data representations_ that can help us achieve our task goals.
+4. Details of the issues identified and the processing steps to resolve them are captured as _knowledge_ and logged.
+5. Details describing the approaches that are evaluated to develop _data representations_ that can help us with the analysis task are logged.
+6. See [this notebook](/examples_of_use/machine_learning/example_ml_eda_phase.ipynb) for the implementation.</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypothesis Statement</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#experimentalobservation7">
+  <rdf:type rdf:resource="#ExperimentalObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">## Data Representation 1. In the raw dataset, each line represents a line item in a sales transaction that occured in the store. If you went to the online store and purchased five types of items, then your purchase (transaction) would generate one line in the dataset for each of the five item types, so your purchase would generate five lines. This information for the first quarter of 2010 is the _raw data representation_. A sample is shown in the image below.</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</finding_sequence>
+  <experimental_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypothesis Statement</experimental_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_UNDERSTANDING</intent>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#modelselectionobservation10">
+  <rdf:type rdf:resource="#ModelSelectionObservation"/>
+  <finding rdf:datatype="http://www.w3.org/2001/XMLSchema#string">![](../../images/raw_data_rep.png) 2. As discussed in the exploratory data section, compute a representation where we aggregate all the sales transactions per day and then represent the daily sales for the quarter as a vector that has length equal to the size of the inventory. An element of the vector represents the daily sales corresponding to the inventory item coordinate. A sample of this representation is shown below. This representation is called the _daily sales representation_ in this discussion.</finding>
+  <finding_sequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</finding_sequence>
+  <model_selection_observation_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Model Selection Setup Description</model_selection_observation_type>
+  <intent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MODEL_SELECTION</intent>
+</owl:NamedIndividual>
+
+
+</rdf:RDF>

@@ -31,4 +31,50 @@ Run the main orchestrator from the project root:
 python3 main.py
 ```
 
+## 📦 Packaged Usage (v1)
+This first version assumes a fixed repository structure. A user can install the package, run the knowledge-graph aggregator in a cloned repo, and produce a KMDS knowledge graph.
+
+### Required folders in the cloned repo
+- `documents/`
+- `notebooks/`
+- `data_dictionary/`
+- `output/`
+
+### Expected helper output artifacts
+At least one of these files should exist in `output/`:
+- `full_service_report.json`
+- `kmds_summary.json`
+- `kmds_strategic_summary.json`
+
+### Install
+From the project root:
+```bash
+pip install -e .
+```
+
+### Generate knowledge graph from helper outputs
+```bash
+kmds-kb --workspace . --project-file project_knowledge_graph.xml --mode auto
+```
+
+The command validates the required folders, ingests the helper output artifacts, and writes:
+- `project_knowledge_graph.xml`
+
+### Adapter command (direct use)
+You can also run the output adapter directly for a single file:
+```bash
+kmds-analyze --input output/full_service_report.json --project-file project_knowledge_graph.xml --create-project --workflow-name kmds_project_workflow --mode auto
+```
+
+### Backward-compatible template script
+If you are using the template script path, this remains supported:
+```bash
+python kb_aggregator.py --workspace . --project-file project_knowledge_graph.xml --mode auto
+```
+
+### Common failure messages
+- Missing folder(s): one or more required directories are absent.
+- No helper output files found: none of the expected JSON artifacts are present in `output/`.
+- Project file already exists in create mode: rerun with update mode or choose a new target path.
+
 ---

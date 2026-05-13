@@ -1,9 +1,15 @@
 [project]
 name = "kmds-data-helper"
 version = "0.1.0"
-description = "AI-powered data dictionary generator for KMDS"
-requires-python = ">=3.12"
+description = "Repository-grounded KMDS helper that analyzes project artifacts and builds a KMDS knowledge graph"
+readme = "README.md"
+license = { text = "Proprietary" }
+authors = [
+    { name = "KMDS Data Helper Team" }
+]
+requires-python = ">=3.12,<3.13"
 dependencies = [
+    "kmds",
     "pymupdf4llm>=0.0.12",
     "ollama>=0.1.0",
     "pandas>=2.0.0",
@@ -17,6 +23,12 @@ dependencies = [
     "pytest>=9.0.3",
     "pypdf>=6.11.0",
     "fg-data-profiling>=4.19.1",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
 ]
 
 [build-system]
@@ -34,7 +46,8 @@ test = [
 # Maps kmds-check to your verified, production pre-flight entry point
 kmds-check = "kmds_data_helper.kmds_check:main"
 # NEW: Maps kmds-analyze to your unified application CLI execution entry point
-kmds-analyze = "kmds_data_helper.cli:main"
+kmds-analyze = "kmds_data_helper.helper_output_adapter:main"
+kmds-kb = "kmds_data_helper.kb_aggregator:main"
 kmds-test = "pytest:main"
 
 [tool.pytest.ini_options]
@@ -50,6 +63,7 @@ addopts = "-n 3 -v --disable-warnings"
 filterwarnings = [
     "ignore:urllib3.*match a supported version:requests.RequestsDependencyWarning",
 ]
+
 
 [dependency-groups]
 dev = [
