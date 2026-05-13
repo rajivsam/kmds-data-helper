@@ -9,14 +9,17 @@ def save_html_report(summaries: dict, filename: str = "audit_report.html"):
         <style>
             body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background: #f0f2f5; color: #333; }}
             .container {{ max-width: 1000px; margin: auto; }}
-            .card {{ background: white; padding: 25px; margin-bottom: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #0056b3; }}
-            h1 {{ color: #1a1a1a; text-align: center; }}
-            h2 {{ color: #0056b3; margin-top: 0; display: flex; justify-content: space-between; align-items: center; }}
+            .persona-group {{ margin-bottom: 40px; }}
+            .persona-title {{ color: #1a1a1a; border-bottom: 2px solid #0056b3; padding-bottom: 5px; margin-bottom: 15px; }}
+            .card {{ background: white; padding: 25px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #0056b3; }}
+            h1 {{ color: #1a1a1a; text-align: center; margin-bottom: 5px; }}
+            h3 {{ color: #444; margin-top: 0; display: flex; justify-content: space-between; align-items: center; }}
             .status-tag {{ font-size: 0.7em; background: #e7f3ff; color: #0056b3; padding: 4px 12px; border-radius: 20px; }}
             pre {{ background: #1e1e1e; color: #dcdcdc; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px; line-height: 1.5; }}
             .meta {{ text-align: center; color: #666; margin-bottom: 40px; font-style: italic; }}
             .error {{ border-left: 5px solid #dc3545; }}
-            .error h2 {{ color: #dc3545; }}
+            .error h3 {{ color: #dc3545; }}
+            .error .status-tag {{ background: #fdf2f2; color: #dc3545; }}
         </style>
     </head>
     <body>
@@ -29,23 +32,31 @@ def save_html_report(summaries: dict, filename: str = "audit_report.html"):
     </html>
     """
     
-    cards = ""
-    for persona, insight in summaries.items():
-        is_error = "error" in insight
-        error_class = "error" if is_error else ""
-        status_text = "ERROR" if is_error else "SUCCESS"
+    content_html = ""
+    
+    # 1. Outer Loop: Iterate through each tracked Persona
+    for persona, notebooks in summaries.items():
+        content_html += f'<div class="persona-group">'
+        content_html += f'<h2 class="persona-title">{persona}</h2>'
         
-        pretty_insight = json.dumps(insight, indent=2)
-        cards += f"""
-        <div class="card {error_class}">
-            <h2>{persona} <span class="status-tag">{status_text}</span></h2>
-            <pre>{pretty_insight}</pre>
-        </div>
-        """
+        # 2. Inner Loop: Extract individual notebook findings matching the persona
+        for notebook_name, insight in notebooks.items():
+            is_error = "error" in insight or "error" in str(insight).lower()
+            error_class = "error" if is_error else ""
+            status_text = "ERROR" if is_error else "SUCCESS"
+            
+            pretty_insight = json.dumps(insight, indent=2)
+            content_html += f"""
+            <div class="card {error_class}">
+                <h3>File: {notebook_name} <span class="status-tag">{status_text}</span></h3>
+                <pre>{pretty_insight}</pre>
+            </div>
+            """
+        content_html += '</div>'
     
     full_html = html_template.format(
         timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        content=cards
+        content=content_html
     )
     
     with open(filename, "w", encoding="utf-8") as f:

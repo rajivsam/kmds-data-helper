@@ -1,3 +1,0 @@
-[console_scripts]
-kmds-check = kmds_data_helper.pre_flight:validate_environment
-kmds-test = pytest:main

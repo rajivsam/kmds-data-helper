@@ -2,12 +2,11 @@ version: "2.0-portable"
 
 # These paths are now relative to the config file's location
 directories:
-  documents: "./documents"
-  data: "./data"
-  notebooks: "./notebooks"
-  personas: "./personas"
-  prompts: "./prompts"
-  output: "./output"
+  notebooks: "notebooks"
+  personas: "personas"
+  documents: "documents"
+  data_dictionary: "data_dictionary"
+  data: "data"
 
 engine_settings:
   shield_mode: "JSON_ONLY"

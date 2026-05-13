@@ -1,7 +1,0 @@
-pymupdf4llm>=0.0.12
-ollama>=0.1.0
-pandas>=2.0.0
-dataprofiler[reports]<=0.13.4
-setuptools<70.0.0
-urllib3<2.0.0
-rich>=13.0.0
