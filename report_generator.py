@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import textwrap
 
 def save_html_report(summaries: dict, filename: str = "audit_report.html"):
     html_template = """
@@ -62,3 +63,31 @@ def save_html_report(summaries: dict, filename: str = "audit_report.html"):
     with open(filename, "w", encoding="utf-8") as f:
         f.write(full_html)
     print(f"\n[SUCCESS] Visual report generated: {filename}")
+
+def save_markdown_report(summaries: dict, filename: str = "audit_report.md"):
+    """
+    Generate a Markdown report with text wrapping for better readability.
+    """
+    markdown_content = f"# KMDS Data Helper: Persona Audit Report\n\n"
+    markdown_content += f"*Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n"
+
+    # Iterate through each tracked Persona
+    for persona, notebooks in summaries.items():
+        markdown_content += f"## {persona}\n\n"
+
+        # Extract individual notebook findings matching the persona
+        for notebook_name, insight in notebooks.items():
+            is_error = "error" in insight or "error" in str(insight).lower()
+            status_text = "ERROR" if is_error else "SUCCESS"
+
+            pretty_insight = json.dumps(insight, indent=2)
+            wrapped_insight = textwrap.fill(pretty_insight, width=80)
+
+            markdown_content += f"### File: {notebook_name}\n"
+            markdown_content += f"**Status:** {status_text}\n\n"
+            markdown_content += f"```json\n{wrapped_insight}\n```\n\n"
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+
+    print(f"\n[SUCCESS] Markdown report generated: {filename}")

@@ -6,7 +6,7 @@ from kmds_data_helper.llm_client import LLMClient
 from kmds_data_helper.service import KMDSReportService
 from kmds_data_helper.aggregator import PersonaAggregator
 # Assuming this is your local layout helper
-from report_generator import save_html_report 
+from report_generator import save_markdown_report 
 
 async def main():
     # 1. Initialize Workspace Infrastructure
@@ -42,7 +42,7 @@ async def main():
     summaries = aggregator.knowledge_dict
     
     # Generate reports
-    save_html_report(summaries)
+    save_markdown_report(summaries)
     
     # End Timer
     end_time = time.perf_counter()
